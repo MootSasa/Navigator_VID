@@ -7,29 +7,29 @@
 
 namespace {
 
-Node makeNode(NodeId id, double x, double y) {
-    Node n;
+domain::Node makeNode(domain::NodeId id, double x, double y) {
+    domain::Node n;
     n.id = id;
-    n.type = NodeType::Intersection;
-    n.coords = Point{x, y};
+    n.type = domain::NodeType::Intersection;
+    n.coords = domain::Point{x, y};
     return n;
 }
 
-Edge makeEdge(EdgeId id, NodeId from, NodeId to, TransportType t, double length) {
-    Edge e;
+domain::Edge makeEdge(domain::EdgeId id, domain::NodeId from, domain::NodeId to, domain::TransportType t, double length) {
+    domain::Edge e;
     e.id = id;
     e.from = from;
     e.to = to;
     e.transport = t;
     e.length_meters = length;
-    e.logic = std::make_unique<StaticLogic>();
+    e.logic = std::make_unique<domain::StaticLogic>();
     return e;
 }
 
 }
 
 TEST(GraphTest, AddAndReadNodes) {
-    Graph g;
+    domain::Graph g;
     g.addNode(makeNode(1, 0, 0));
     g.addNode(makeNode(2, 100, 0));
 
@@ -41,14 +41,14 @@ TEST(GraphTest, AddAndReadNodes) {
 }
 
 TEST(GraphTest, AdjacencyList) {
-    Graph g;
+    domain::Graph g;
     g.addNode(makeNode(1, 0, 0));
     g.addNode(makeNode(2, 100, 0));
     g.addNode(makeNode(3, 100, 100));
 
-    g.addEdge(makeEdge(10, 1, 2, TransportType::Walk, 100));
-    g.addEdge(makeEdge(11, 1, 3, TransportType::Car, 200));
-    g.addEdge(makeEdge(12, 2, 3, TransportType::Walk, 100));
+    g.addEdge(makeEdge(10, 1, 2, domain::TransportType::Walk, 100));
+    g.addEdge(makeEdge(11, 1, 3, domain::TransportType::Car, 200));
+    g.addEdge(makeEdge(12, 2, 3, domain::TransportType::Walk, 100));
 
     EXPECT_EQ(g.getEdgesFrom(1).size(), 2u);
     EXPECT_EQ(g.getEdgesFrom(2).size(), 1u);

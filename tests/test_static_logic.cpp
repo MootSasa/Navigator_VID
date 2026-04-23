@@ -9,19 +9,19 @@
 #include <memory>
 
 TEST(StaticLogicTest, WalkTravelTime) {
-    TransportParams params;
-    StaticLogic logic;
-    FastestStrategy strategy;
+    domain::TransportParams params;
+    domain::StaticLogic logic;
+    application::FastestStrategy strategy;
 
-    Edge edge;
+    domain::Edge edge;
     edge.id = 1;
     edge.from = 1;
     edge.to = 2;
-    edge.transport = TransportType::Walk;
+    edge.transport = domain::TransportType::Walk;
     edge.length_meters = 1000.0;
 
     std::chrono::system_clock::time_point departure{};
-    QueryContext ctx{departure, params};
+    domain::QueryContext ctx{departure, params};
 
     auto result = logic.calculate(edge, ctx, strategy);
     ASSERT_TRUE(result.has_value());
@@ -36,20 +36,20 @@ TEST(StaticLogicTest, WalkTravelTime) {
 }
 
 TEST(StaticLogicTest, CarFasterThanWalk) {
-    TransportParams params;
-    StaticLogic logic;
-    FastestStrategy strategy;
+    domain::TransportParams params;
+    domain::StaticLogic logic;
+    application::FastestStrategy strategy;
 
-    Edge walk_edge;
-    walk_edge.transport = TransportType::Walk;
+    domain::Edge walk_edge;
+    walk_edge.transport = domain::TransportType::Walk;
     walk_edge.length_meters = 1000.0;
 
-    Edge car_edge;
-    car_edge.transport = TransportType::Car;
+    domain::Edge car_edge;
+    car_edge.transport = domain::TransportType::Car;
     car_edge.length_meters = 1000.0;
 
     std::chrono::system_clock::time_point departure{};
-    QueryContext ctx{departure, params};
+    domain::QueryContext ctx{departure, params};
 
     auto w = logic.calculate(walk_edge, ctx, strategy);
     auto c = logic.calculate(car_edge, ctx, strategy);
