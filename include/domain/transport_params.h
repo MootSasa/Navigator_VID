@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+namespace domain {
+
 struct TransportParams {
     double walk_speed_kmh = 5.0;
     double walk_fatigue_per_km = 10.0;
@@ -44,3 +46,5 @@ struct TransportParams {
         return kmh * 1000.0 / 3600.0;
     }
 };
+
+} // namespace domain

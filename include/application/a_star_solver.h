@@ -9,19 +9,23 @@
 #include <optional>
 #include <vector>
 
+namespace application {
+
 class IRouteStrategy;
 
 struct RouteResult {
-    std::vector<NodeId> nodes;
-    std::vector<EdgeId> edges;
-    CombinedCost total_cost;
+    std::vector<domain::NodeId> nodes;
+    std::vector<domain::EdgeId> edges;
+    domain::CombinedCost total_cost;
 };
 
 std::optional<RouteResult> findRoute(
-    const Graph& graph,
-    NodeId start,
-    NodeId goal,
+    const domain::Graph& graph,
+    domain::NodeId start,
+    domain::NodeId goal,
     const IRouteStrategy& strategy,
-    const TransportParams& params,
+    const domain::TransportParams& params,
     std::chrono::system_clock::time_point departure
 );
+
+} // namespace application

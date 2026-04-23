@@ -1,5 +1,7 @@
 #pragma once
 
+namespace domain {
+
 using NodeId = int;
 using EdgeId = int;
 
@@ -17,3 +19,5 @@ enum class NodeType {
     MetroStation,
     Poi
 };
+
+} // namespace domain

@@ -4,31 +4,35 @@
 
 #include <cmath>
 
-CombinedCost FastestStrategy::create_cost(
-    const Edge& /*edge*/,
-    const TransportParams& /*params*/,
+namespace application {
+
+domain::CombinedCost FastestStrategy::create_cost(
+    const domain::Edge& /*edge*/,
+    const domain::TransportParams& /*params*/,
     double travel_seconds,
     double wait_seconds
 ) const {
-    CombinedCost c;
+    domain::CombinedCost c;
     c.time_seconds = travel_seconds + wait_seconds;
     return c;
 }
 
-CombinedCost FastestStrategy::heuristic(
-    const Node& from,
-    const Node& to,
-    const TransportParams& params
+domain::CombinedCost FastestStrategy::heuristic(
+    const domain::Node& from,
+    const domain::Node& to,
+    const domain::TransportParams& params
 ) const {
     double dx = from.coords.x - to.coords.x;
     double dy = from.coords.y - to.coords.y;
     double dist = std::sqrt(dx * dx + dy * dy);
 
-    CombinedCost c;
+    domain::CombinedCost c;
     c.time_seconds = dist / params.maxSpeedMps();
     return c;
 }
 
-bool FastestStrategy::less(const CombinedCost& a, const CombinedCost& b) const {
+bool FastestStrategy::less(const domain::CombinedCost& a, const domain::CombinedCost& b) const {
     return a.time_seconds < b.time_seconds;
 }
+
+} // namespace application

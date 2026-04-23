@@ -4,6 +4,8 @@
 
 #include <string>
 
+namespace domain {
+
 struct Point {
     double x = 0.0;
     double y = 0.0;
@@ -15,3 +17,5 @@ struct Node {
     std::string name;
     Point coords;
 };
+
+} // namespace domain

@@ -11,33 +11,35 @@
 #include <utility>
 #include <vector>
 
+namespace application {
+
 namespace {
 
 struct LastRoute {
-    TransportType transport;
+    domain::TransportType transport;
     std::string name;
 };
 
 struct OpenNode {
-    NodeId id;
-    CombinedCost g;
-    CombinedCost f;
+    domain::NodeId id;
+    domain::CombinedCost g;
+    domain::CombinedCost f;
     std::chrono::system_clock::time_point arrival;
     std::optional<LastRoute> last_route;
 };
 
-bool sameRoute(const LastRoute& a, const Edge& e) {
+bool sameRoute(const LastRoute& a, const domain::Edge& e) {
     return a.transport == e.transport && a.name == e.name;
 }
 
-}
+} // anonymous namespace
 
 std::optional<RouteResult> findRoute(
-    const Graph& graph,
-    NodeId start,
-    NodeId goal,
+    const domain::Graph& graph,
+    domain::NodeId start,
+    domain::NodeId goal,
     const IRouteStrategy& strategy,
-    const TransportParams& params,
+    const domain::TransportParams& params,
     std::chrono::system_clock::time_point departure
 ) {
     if (!graph.hasNode(start) || !graph.hasNode(goal)) {
@@ -49,11 +51,11 @@ std::optional<RouteResult> findRoute(
     };
     std::priority_queue<OpenNode, std::vector<OpenNode>, decltype(cmp)> open(cmp);
 
-    std::unordered_map<NodeId, CombinedCost> best_g;
-    std::unordered_map<NodeId, std::pair<NodeId, EdgeId>> came_from;
+    std::unordered_map<domain::NodeId, domain::CombinedCost> best_g;
+    std::unordered_map<domain::NodeId, std::pair<domain::NodeId, domain::EdgeId>> came_from;
 
-    CombinedCost g0;
-    CombinedCost h0 = strategy.heuristic(graph.getNode(start), graph.getNode(goal), params);
+    domain::CombinedCost g0;
+    domain::CombinedCost h0 = strategy.heuristic(graph.getNode(start), graph.getNode(goal), params);
     open.push(OpenNode{start, g0, g0 + h0, departure, std::nullopt});
     best_g[start] = g0;
 
@@ -62,9 +64,9 @@ std::optional<RouteResult> findRoute(
         open.pop();
 
         if (cur.id == goal) {
-            std::vector<NodeId> path_nodes;
-            std::vector<EdgeId> path_edges;
-            NodeId n = goal;
+            std::vector<domain::NodeId> path_nodes;
+            std::vector<domain::EdgeId> path_edges;
+            domain::NodeId n = goal;
             path_nodes.push_back(n);
             while (came_from.count(n) > 0) {
                 auto [prev, e] = came_from[n];
@@ -82,21 +84,21 @@ std::optional<RouteResult> findRoute(
             continue;
         }
 
-        for (const Edge& edge : graph.getEdgesFrom(cur.id)) {
-            QueryContext ctx{cur.arrival, params};
+        for (const domain::Edge& edge : graph.getEdgesFrom(cur.id)) {
+            domain::QueryContext ctx{cur.arrival, params};
             auto res = edge.logic->calculate(edge, ctx, strategy);
             if (!res) continue;
 
             int transfer_add = 0;
-            if (edge.transport != TransportType::Walk) {
+            if (edge.transport != domain::TransportType::Walk) {
                 if (cur.last_route && !sameRoute(*cur.last_route, edge)) {
                     transfer_add = 1;
                 }
             }
 
-            CombinedCost edge_cost = res->cost;
+            domain::CombinedCost edge_cost = res->cost;
             edge_cost.transfers += transfer_add;
-            CombinedCost new_g = cur.g + edge_cost;
+            domain::CombinedCost new_g = cur.g + edge_cost;
 
             auto it = best_g.find(edge.to);
             if (it == best_g.end() || strategy.less(new_g, it->second)) {
@@ -104,11 +106,11 @@ std::optional<RouteResult> findRoute(
                 came_from[edge.to] = {cur.id, edge.id};
 
                 std::optional<LastRoute> next_last = cur.last_route;
-                if (edge.transport != TransportType::Walk) {
+                if (edge.transport != domain::TransportType::Walk) {
                     next_last = LastRoute{edge.transport, edge.name};
                 }
 
-                CombinedCost h = strategy.heuristic(graph.getNode(edge.to), graph.getNode(goal), params);
+                domain::CombinedCost h = strategy.heuristic(graph.getNode(edge.to), graph.getNode(goal), params);
                 open.push(OpenNode{
                     edge.to,
                     new_g,
@@ -122,3 +124,5 @@ std::optional<RouteResult> findRoute(
 
     return std::nullopt;
 }
+
+} // namespace application

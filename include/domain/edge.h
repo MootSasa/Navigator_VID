@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+namespace domain {
+
 struct Edge {
     EdgeId id = 0;
     NodeId from = 0;
@@ -15,3 +17,5 @@ struct Edge {
     std::string name;
     std::unique_ptr<ITimeVariant> logic;
 };
+
+} // namespace domain

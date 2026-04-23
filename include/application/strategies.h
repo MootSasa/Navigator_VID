@@ -2,20 +2,24 @@
 
 #include "application/i_route_strategy.h"
 
+namespace application {
+
 class FastestStrategy : public IRouteStrategy {
 public:
-    CombinedCost create_cost(
-        const Edge& edge,
-        const TransportParams& params,
+    domain::CombinedCost create_cost(
+        const domain::Edge& edge,
+        const domain::TransportParams& params,
         double travel_seconds,
         double wait_seconds
     ) const override;
 
-    CombinedCost heuristic(
-        const Node& from,
-        const Node& to,
-        const TransportParams& params
+    domain::CombinedCost heuristic(
+        const domain::Node& from,
+        const domain::Node& to,
+        const domain::TransportParams& params
     ) const override;
 
-    bool less(const CombinedCost& a, const CombinedCost& b) const override;
+    bool less(const domain::CombinedCost& a, const domain::CombinedCost& b) const override;
 };
+
+} // namespace application

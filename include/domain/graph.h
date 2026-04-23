@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
+namespace domain {
+
 class Graph {
 public:
     void addNode(Node node) {
@@ -40,3 +42,5 @@ private:
     std::unordered_map<NodeId, Node> nodes_;
     std::unordered_map<NodeId, std::vector<Edge>> adj_;
 };
+
+} // namespace domain

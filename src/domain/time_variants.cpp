@@ -5,10 +5,12 @@
 
 #include <chrono>
 
+namespace domain {
+
 std::optional<EdgeResult> StaticLogic::calculate(
     const Edge& edge,
     const QueryContext& ctx,
-    const IRouteStrategy& strategy
+    const application::IRouteStrategy& strategy
 ) const {
     double speed_mps = ctx.params.speedMps(edge.transport);
     if (speed_mps <= 0.0) {
@@ -26,3 +28,5 @@ std::optional<EdgeResult> StaticLogic::calculate(
 
     return EdgeResult{arrival, cost};
 }
+
+} // namespace domain

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace domain {
+
 struct CombinedCost {
     double time_seconds = 0.0;
     double money_rub = 0.0;
@@ -15,3 +17,5 @@ inline CombinedCost operator+(const CombinedCost& a, const CombinedCost& b) {
         a.transfers + b.transfers
     };
 }
+
+} // namespace domain
