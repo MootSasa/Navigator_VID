@@ -13,6 +13,8 @@ add_library(navigator_core
     src/domain/time_variants.cpp
     src/application/strategies.cpp
     src/application/a_star_solver.cpp
+    src/infrastructure/csv_parser.cpp
+    src/infrastructure/graph_builder.cpp
 )
 
 target_include_directories(navigator_core PUBLIC include)
@@ -36,6 +38,8 @@ add_executable(navigator_tests
     tests/test_graph.cpp
     tests/test_static_logic.cpp
     tests/test_a_star.cpp
+    tests/test_csv_parser.cpp
+    tests/test_graph_builder.cpp
 )
 target_link_libraries(navigator_tests PRIVATE navigator_core GTest::gtest_main)
 
