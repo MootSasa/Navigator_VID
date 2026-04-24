@@ -6,6 +6,7 @@
 #include "domain/time_variants.h"
 #include "domain/types.h"
 
+#include <algorithm>
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
@@ -239,8 +240,50 @@ std::unique_ptr<domain::Graph> GraphBuilder::build() {
         // Пока используем StaticLogic для всех рёбер.
         // ScheduledLogic, FrequencyBasedLogic и TimeWindowLogic
         // будут добавлены на этапе 2 разработки.
-        edge.logic = std::make_unique<domain::StaticLogic>();
 
+        // Ищем, есть ли для этого ребра особое расписание
+        auto sched_it = schedules_.find(edge.id);
+        
+        if (edge.transport == domain::TransportType::Metro) {
+            // Метро не имеет расписания в schedules.csv, у него частотная логика
+            edge.logic = std::make_unique<domain::FrequencyBasedLogic>();
+            
+        } else if (sched_it != schedules_.end()) {
+            if (sched_it->second.schedule_type == "time_window") {
+                // Логика разводных мостов
+                try {
+                    int close_h = std::stoi(sched_it->second.params.substr(0, 2));
+                    int open_h = std::stoi(sched_it->second.params.substr(6, 2));
+                    edge.logic = std::make_unique<domain::TimeWindowLogic>(close_h, open_h);
+                } catch (...) {
+                    edge.logic = std::make_unique<domain::StaticLogic>();
+                }
+                
+            } else if (sched_it->second.schedule_type == "fixed_times") {
+                // Логика автобусов: парсим "08:00,08:15,09:00" в минуты
+                std::vector<int> departure_minutes;
+                std::stringstream ss(sched_it->second.params);
+                std::string time_str;
+                
+                while (std::getline(ss, time_str, ',')) {
+                    try {
+                        int h = std::stoi(time_str.substr(0, 2));
+                        int m = std::stoi(time_str.substr(3, 2));
+                        departure_minutes.push_back(h * 60 + m);
+                    } catch (...) {}
+                }
+                // На всякий случай сортируем расписание
+                std::sort(departure_minutes.begin(), departure_minutes.end());
+                edge.logic = std::make_unique<domain::ScheduledLogic>(departure_minutes);
+                
+            } else {
+                edge.logic = std::make_unique<domain::StaticLogic>();
+            }
+        } else {
+            // Для всех остальных (пешком, авто без мостов) - статичная логика
+            edge.logic = std::make_unique<domain::StaticLogic>();
+        }
+        
         graph->addEdge(std::move(edge));
     }
 

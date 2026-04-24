@@ -3,9 +3,11 @@
 #include "domain/edge.h"
 #include "domain/node.h"
 #include "domain/types.h"
+#include "domain/time_variants.h"
 
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 namespace domain {
 
@@ -36,6 +38,28 @@ public:
 
     std::size_t nodeCount() const {
         return nodes_.size();
+    }
+
+    const std::unordered_map<NodeId, Node>& getAllNodes() const {
+        return nodes_;
+    }
+
+    const std::unordered_map<NodeId, std::vector<Edge>>& getAllEdges() const {
+        return adj_;
+    }
+
+    void addTransfer(NodeId from, NodeId to, double time_minutes, const std::string& name = "Пересадка") {
+        Edge edge;
+        edge.id = -1; // у пересадок может не быть ID из CSV
+        edge.from = from;
+        edge.to = to;
+        edge.transport = TransportType::Walk; // пересадка - это пешком
+        
+        edge.length_meters = time_minutes * 60.0 * 1.0; // условная длина
+        edge.name = name;
+        edge.logic = std::make_unique<StaticLogic>();
+    
+    addEdge(std::move(edge));
     }
 
 private:
