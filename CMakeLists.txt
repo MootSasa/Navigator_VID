@@ -14,6 +14,7 @@ add_library(navigator_core
     src/domain/time_variants.cpp
     src/application/strategies.cpp
     src/application/a_star_solver.cpp
+    src/application/navigation_facade.cpp
     src/infrastructure/csv_parser.cpp
     src/infrastructure/graph_builder.cpp
 )
@@ -41,8 +42,16 @@ add_executable(navigator_tests
     tests/test_a_star.cpp
     tests/test_csv_parser.cpp
     tests/test_graph_builder.cpp
+    tests/test_strategies.cpp
+    tests/test_time_variants.cpp
+    tests/test_navigation_facade.cpp
 )
 target_link_libraries(navigator_tests PRIVATE navigator_core GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(navigator_tests)
+
+add_executable(navigator
+    src/main.cpp
+)
+target_link_libraries(navigator PRIVATE navigator_core)

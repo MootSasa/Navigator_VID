@@ -1,13 +1,13 @@
 #pragma once
 
+#include "../domain/transport_params.h"
+#include "csv_parser.h"
+
 #include <memory>
 #include <string>
 #include <vector>
 #include <map>
 #include <set>
-
-#include "domain/transport_params.h"
-#include "infrastructure/csv_parser.h"
 
 // Forward declarations для доменных типов
 namespace domain {

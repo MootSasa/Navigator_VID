@@ -112,7 +112,7 @@ TEST(GraphBuilderTest, UnknownNodeTypeDefaultsToIntersection) {
     builder.loadNodes(nodes_path).loadEdges(edges_path);
     auto graph = builder.build();
 
-    // Неизвестный тип узла по умолчанию — Intersection
+    // Неизвестный тип узла по умолчанию - Intersection
     EXPECT_EQ(graph->getNode(1).type, domain::NodeType::Intersection);
 
     removeTempFile(nodes_path);
@@ -161,7 +161,7 @@ TEST(GraphBuilderTest, UnknownTransportTypeDefaultsToWalk) {
     builder.loadNodes(nodes_path).loadEdges(edges_path);
     auto graph = builder.build();
 
-    // Неизвестный тип транспорта по умолчанию — Walk
+    // Неизвестный тип транспорта по умолчанию - Walk
     const auto& edges = graph->getEdgesFrom(1);
     ASSERT_EQ(edges.size(), 1u);
     EXPECT_EQ(edges[0].transport, domain::TransportType::Walk);
