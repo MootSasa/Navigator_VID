@@ -10,6 +10,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 add_library(navigator_core
+    src/domain/graph.cpp
     src/domain/time_variants.cpp
     src/application/strategies.cpp
     src/application/a_star_solver.cpp
