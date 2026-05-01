@@ -1,0 +1,2539 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Navigator Map Editor</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; font-size:13px; background:#1e1e2e; color:#cdd6f4; overflow:hidden; height:100vh; display:flex; flex-direction:column; }
+
+/* Toolbar */
+#toolbar { display:flex; align-items:center; gap:6px; padding:6px 10px; background:#181825; border-bottom:1px solid #313244; flex-shrink:0; flex-wrap:wrap; }
+#toolbar .sep { width:1px; height:24px; background:#313244; }
+.tool-btn { padding:5px 10px; border:1px solid #45475a; border-radius:4px; background:#313244; color:#cdd6f4; cursor:pointer; font-size:12px; }
+.tool-btn:hover { background:#45475a; }
+.tool-btn.active { background:#5c6bc0; border-color:#5c6bc0; color:#fff; }
+.tool-btn.danger { background:#e53935; border-color:#e53935; color:#fff; }
+.tool-btn.danger:hover { background:#ef5350; }
+.tool-btn.green { background:#43a047; border-color:#43a047; color:#fff; }
+.tool-btn.green:hover { background:#66bb6a; }
+#gridStep { width:50px; background:#313244; color:#cdd6f4; border:1px solid #45475a; border-radius:4px; padding:3px 6px; text-align:center; }
+#snapCheck { accent-color:#5c6bc0; }
+label { font-size:12px; color:#a6adc8; }
+
+/* Main area */
+#main { display:flex; flex:1; overflow:hidden; }
+
+/* Properties panel */
+#props { width:280px; background:#181825; border-right:1px solid #313244; overflow-y:auto; flex-shrink:0; display:flex; flex-direction:column; }
+#props h3 { font-size:13px; color:#a6adc8; padding:8px 10px 4px; text-transform:uppercase; letter-spacing:.5px; }
+.prop-group { padding:4px 10px 8px; border-bottom:1px solid #313244; }
+.prop-row { display:flex; align-items:center; gap:6px; margin:3px 0; }
+.prop-row label { width:70px; flex-shrink:0; }
+.prop-row input, .prop-row select { flex:1; background:#313244; color:#cdd6f4; border:1px solid #45475a; border-radius:4px; padding:4px 8px; font-size:12px; }
+.prop-row select { padding:3px; }
+
+/* Tabs */
+#tabs { display:flex; border-bottom:1px solid #313244; }
+#tabs button { flex:1; padding:6px; background:#181825; border:none; color:#a6adc8; cursor:pointer; font-size:11px; border-bottom:2px solid transparent; }
+#tabs button.active { color:#cdd6f4; border-bottom-color:#5c6bc0; }
+.tab-content { display:none; flex:1; overflow-y:auto; }
+.tab-content.active { display:flex; flex-direction:column; }
+
+/* Transport params table */
+#paramsTable { width:100%; border-collapse:collapse; font-size:12px; }
+#paramsTable th { background:#313244; padding:4px 6px; text-align:left; color:#a6adc8; }
+#paramsTable td { padding:3px 6px; border-bottom:1px solid #313244; }
+#paramsTable input { width:100%; background:transparent; color:#cdd6f4; border:1px solid transparent; border-radius:2px; padding:2px 4px; }
+#paramsTable input:hover { border-color:#45475a; }
+#paramsTable input:focus { border-color:#5c6bc0; background:#313244; }
+
+/* Schedule editor */
+#scheduleList { padding:4px 10px; }
+.sched-item { background:#313244; border-radius:4px; padding:6px 8px; margin:4px 0; }
+.sched-item select, .sched-item input { background:#45475a; color:#cdd6f4; border:1px solid #585b70; border-radius:3px; padding:3px 6px; font-size:12px; }
+.sched-item .del-sched { background:#e53935; color:#fff; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:11px; }
+
+/* Canvas container */
+#canvasWrap { flex:1; position:relative; overflow:hidden; background:#fafafa; }
+#mapCanvas { display:block; cursor:crosshair; }
+
+/* Status bar */
+#status { display:flex; gap:16px; padding:4px 10px; background:#181825; border-top:1px solid #313244; font-size:11px; color:#a6adc8; flex-shrink:0; }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:100; justify-content:center; align-items:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:#1e1e2e; border:1px solid #313244; border-radius:8px; padding:16px; max-width:500px; width:90%; max-height:80vh; overflow-y:auto; }
+.modal h2 { font-size:16px; margin-bottom:12px; }
+.modal .err { color:#f38ba8; }
+.modal .warn { color:#f9e2af; }
+.modal .ok { color:#a6e3a1; }
+.modal li { padding:2px 0; }
+.modal .btn-row { margin-top:12px; display:flex; gap:8px; justify-content:flex-end; }
+
+/* Tooltip */
+#tooltip { position:absolute; background:#313244; color:#cdd6f4; padding:4px 8px; border-radius:4px; font-size:11px; pointer-events:none; z-index:10; display:none; border:1px solid #45475a; }
+</style>
+</head>
+<body>
+
+<!-- Toolbar -->
+<div id="toolbar">
+  <button class="tool-btn active" data-tool="select" title="Выделение (V)">🔲 Выбор</button>
+  <button class="tool-btn" data-tool="addNode" title="Добавить узел (N)">📍 Узел</button>
+  <button class="tool-btn" data-tool="addEdge" title="Добавить ребро (E)">🔗 Ребро</button>
+  <button class="tool-btn" data-tool="drawRoad" title="Рисование дороги (R)">🛣️ Дорога</button>
+  <div class="sep"></div>
+  <label><input id="snapCheck" type="checkbox" checked> Сетка</label>
+  <label><input id="roadSnapCheck" type="checkbox" checked> Дороги</label>
+  <label><input id="autoIntersectCheck" type="checkbox" checked> Перекрёстки</label>
+  <label><input id="sidewalkCheck" type="checkbox" checked> Тротуары</label>
+  <div class="sep"></div>
+  <button class="tool-btn" id="zoomOutBtn" title="Уменьшить (-)">➖</button>
+  <button class="tool-btn" id="zoomInBtn" title="Увеличить (+)">➕</button>
+  <button class="tool-btn" id="fitBtn" title="Home">📐 Вписать</button>
+  <div class="sep"></div>
+  <button class="tool-btn" id="undoBtn" title="Ctrl+Z">↩️</button>
+  <button class="tool-btn" id="redoBtn" title="Ctrl+Shift+Z">↪️</button>
+  <div class="sep"></div>
+  <button class="tool-btn green" id="autoWalkBtn" title="Создать пешеходные переходы">🚶 Переходы</button>
+  <button class="tool-btn green" id="autoRenameBtn" title="Авто-переименование перекрёстков">🔄 Имена</button>
+  <button class="tool-btn green" id="walkNameBtn" title="Названия пешеходных дорог по POI">🏷️ Имена walk</button>
+  <button class="tool-btn green" id="mergeNodesBtn" title="Слить близкие вершины">🔗 Слить</button>
+  <button class="tool-btn" id="bgBtn" title="Загрузить подложку">🖼️ Подложка</button>
+  <button class="tool-btn" id="osmBtn" title="Включить OSM-тайлы">🗺️ OSM</button>
+  <div class="sep"></div>
+  <button class="tool-btn" id="importBtn">📂 Импорт</button>
+  <button class="tool-btn" id="exportBtn">💾 Экспорт</button>
+  <button class="tool-btn green" id="saveBtn" title="Сохранить в браузер (Ctrl+S)">💾 Сохранить</button>
+  <button class="tool-btn danger" id="clearBtn">🗑️ Очистить</button>
+  <input id="fileInput" type="file" multiple accept=".csv" style="display:none">
+  <input id="bgFileInput" type="file" accept="image/*" style="display:none">
+</div>
+
+<!-- Main -->
+<div id="main">
+  <!-- Properties -->
+  <div id="props">
+    <div id="tabs">
+      <button class="active" data-tab="nodeTab">Узел</button>
+      <button data-tab="edgeTab">Ребро</button>
+      <button data-tab="schedTab">Расписание</button>
+      <button data-tab="paramTab">Параметры</button>
+      <button data-tab="bgTab">Подложка</button>
+    </div>
+
+    <!-- Node tab -->
+    <div id="nodeTab" class="tab-content active">
+      <div class="prop-group">
+        <h3>Тип узла</h3>
+        <div class="prop-row">
+          <label>Тип:</label>
+          <select id="nodeType">
+            <option value="intersection">Перекрёсток</option>
+            <option value="bus_stop">Остановка</option>
+            <option value="metro_station">Метро</option>
+            <option value="poi">Место</option>
+          </select>
+        </div>
+      </div>
+      <div class="prop-group">
+        <h3>Свойства</h3>
+        <div class="prop-row"><label>ID:</label><input id="nodeId" type="number" min="1"></div>
+        <div class="prop-row"><label>Название:</label><input id="nodeName" type="text" placeholder="Название"></div>
+        <div class="prop-row"><label>X:</label><input id="nodeX" type="number"></div>
+        <div class="prop-row"><label>Y:</label><input id="nodeY" type="number"></div>
+      </div>
+      <div class="prop-group">
+        <button class="tool-btn danger" id="deleteNodeBtn" style="width:100%">Удалить узел</button>
+      </div>
+    </div>
+
+    <!-- Edge tab -->
+    <div id="edgeTab" class="tab-content">
+      <div class="prop-group">
+        <h3>Тип транспорта</h3>
+        <div class="prop-row">
+          <label>Тип:</label>
+          <select id="edgeTransport">
+            <option value="walk">🚶 Пешком</option>
+            <option value="car">🚗 Авто</option>
+            <option value="bus">🚌 Автобус</option>
+            <option value="metro">🚇 Метро</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <label><input id="bidirCheck" type="checkbox"> Двустороннее</label>
+        </div>
+        <div class="prop-row">
+          <label><input id="sidewalkEdgeCheck" type="checkbox"> Тротуар</label>
+        </div>
+      </div>
+      <div class="prop-group">
+        <h3>Свойства</h3>
+        <div class="prop-row"><label>ID:</label><input id="edgeId" type="number" min="1"></div>
+        <div class="prop-row"><label>Из:</label><input id="edgeFrom" type="number" readonly></div>
+        <div class="prop-row"><label>В:</label><input id="edgeTo" type="number" readonly></div>
+        <div class="prop-row"><label>Длина (м):</label><input id="edgeLen" type="number" min="0" step="0.1"></div>
+        <div class="prop-row"><label>Название:</label><input id="edgeName" type="text"></div>
+      </div>
+      <div class="prop-group">
+        <button class="tool-btn danger" id="deleteEdgeBtn" style="width:100%">Удалить ребро</button>
+      </div>
+    </div>
+
+    <!-- Schedule tab -->
+    <div id="schedTab" class="tab-content">
+      <div class="prop-group">
+        <h3>Расписание ребра</h3>
+        <div class="prop-row"><label>Ребро ID:</label><input id="schedEdgeId" type="number" min="1"></div>
+        <button class="tool-btn green" id="addSchedBtn" style="width:100%;margin-top:4px">+ Добавить расписание</button>
+      </div>
+      <div id="scheduleList"></div>
+    </div>
+
+    <!-- Params tab -->
+    <div id="paramTab" class="tab-content">
+      <div class="prop-group">
+        <h3>Параметры транспорта</h3>
+        <table id="paramsTable">
+          <thead><tr><th>Тип</th><th>Параметр</th><th>Значение</th><th></th></tr></thead>
+          <tbody id="paramsBody"></tbody>
+        </table>
+        <button class="tool-btn green" id="addParamBtn" style="width:100%;margin-top:6px">+ Добавить параметр</button>
+      </div>
+    </div>
+
+    <!-- Background tab -->
+    <div id="bgTab" class="tab-content">
+      <div class="prop-group">
+        <h3>🗺️ OSM-тайлы</h3>
+        <div class="prop-row"><label><input id="osmEnabledCheck" type="checkbox"> Включить OSM</label></div>
+        <div class="prop-row"><label>Прозрачность:</label><input id="osmOpacity" type="range" min="5" max="100" value="60" style="flex:1"><span id="osmOpacityVal" style="width:30px;text-align:right">60%</span></div>
+        <div class="prop-row"><label>Центр шир:</label><input id="osmLat" type="number" value="55.93331" step="0.0001" style="flex:1"></div>
+        <div class="prop-row"><label>Центр долг:</label><input id="osmLon" type="number" value="37.50526" step="0.0001" style="flex:1"></div>
+        <div class="prop-row"><label>Радиус:</label><input id="osmRadius" type="number" value="2000" min="100" max="50000" step="100" style="flex:1"><label style="width:auto">м</label></div>
+        <div class="prop-row"><label>Скорость:</label><input id="osmSpeed" type="number" value="2" min="1" max="10" step="1" style="flex:1"><label style="width:auto">тайл/с</label></div>
+        <div style="font-size:10px;color:#a6adc8;margin-top:4px">Центр = точка (0,0). Радиус = область предзагрузки. Скорость = запросов в секунду к OSM.</div>
+      </div>
+      <div class="prop-group">
+        <h3>🖼️ Картинка подложки</h3>
+        <div class="prop-row"><label>Файл:</label><span id="bgFileName" style="flex:1;color:#a6adc8;font-size:11px">Не загружен</span></div>
+        <button class="tool-btn" id="bgLoadBtn" style="width:100%;margin-top:4px">📂 Загрузить картинку</button>
+      </div>
+      <div class="prop-group">
+        <h3>Настройки картинки</h3>
+        <div class="prop-row"><label>Видимость:</label><label><input id="bgVisibleCheck" type="checkbox" checked> Показать</label></div>
+        <div class="prop-row"><label>Прозрачность:</label><input id="bgOpacity" type="range" min="5" max="100" value="40" style="flex:1"><span id="bgOpacityVal" style="width:30px;text-align:right">40%</span></div>
+        <div class="prop-row"><label>Масштаб:</label><input id="bgScale" type="number" value="1" min="0.01" max="100" step="0.1" style="flex:1"><label style="width:auto">м/пикс</label></div>
+        <div class="prop-row"><label>Смещение X:</label><input id="bgOffX" type="number" value="0" step="10" style="flex:1"><label style="width:auto">м</label></div>
+        <div class="prop-row"><label>Смещение Y:</label><input id="bgOffY" type="number" value="0" step="10" style="flex:1"><label style="width:auto">м</label></div>
+        <div class="prop-row"><label>Поворот:</label><input id="bgRotation" type="number" value="0" min="-360" max="360" step="1" style="flex:1"><label style="width:auto">°</label></div>
+      </div>
+      <div class="prop-group">
+        <button class="tool-btn danger" id="bgRemoveBtn" style="width:100%">Удалить подложку</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div id="canvasWrap">
+    <canvas id="mapCanvas"></canvas>
+    <div id="tooltip"></div>
+  </div>
+</div>
+
+<!-- Status -->
+<div id="status">
+  <span id="coordStatus">x=0 y=0</span>
+  <span id="latlonStatus"></span>
+  <span id="osmStatus"></span>
+  <span id="countStatus">Узлов: 0 | Рёбер: 0</span>
+  <span id="zoomStatus">Масштаб: 100%</span>
+  <span id="toolStatus">Режим: Выбор</span>
+</div>
+
+<!-- Validation modal -->
+<div class="modal-overlay" id="validModal">
+  <div class="modal">
+    <h2>Валидация данных</h2>
+    <ul id="validList"></ul>
+    <div class="btn-row">
+      <button class="tool-btn" id="validCancel">Отмена</button>
+      <button class="tool-btn green" id="validExport">Экспорт всё равно</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA MODEL
+// ============================================================
+const NODE_TYPES = ['intersection','bus_stop','metro_station','poi'];
+const TRANSPORT_TYPES = ['walk','car','bus','metro'];
+const NODE_COLORS = {intersection:'#9e9e9e',bus_stop:'#2196f3',metro_station:'#e53935',poi:'#fb8c00'};
+const EDGE_COLORS = {walk:'#66bb6a',car:'#757575',bus:'#1e88e5',metro:'#e53935'};
+const EDGE_STYLES = {walk:[6,4],car:[],bus:[],metro:[]};
+const NODE_RADII = {intersection:6,bus_stop:7,metro_station:8,poi:7};
+
+let nodes = [];   // {id, type, name, x, y}
+let edges = [];   // {id, from, to, transport, length, name}
+let schedules = []; // {edgeId, type, params}
+let params = [];    // {transport, name, value}
+
+let nextNodeId = 1;
+let nextEdgeId = 1;
+
+// ============================================================
+// STATE
+// ============================================================
+let tool = 'select';       // select | addNode | addEdge | drawRoad
+let selectedNode = null;   // index
+let selectedEdge = null;   // index
+let edgeFromNode = null;   // index for addEdge mode
+let hoveredNode = null;
+let hoveredEdge = null;
+let dragging = null;       // {index, startX, startY}
+let pan = {x:0, y:0};
+let zoom = 1;
+let snapEnabled = true;
+let roadSnapEnabled = true;
+let autoIntersectEnabled = true;
+let sidewalkEnabled = true;
+let roadFromNode = null;   // index for drawRoad mode
+
+// Background image
+let bgImage = null;       // HTMLImageElement
+let bgVisible = true;
+let bgOpacityVal = 0.4;
+let bgScaleVal = 1;       // meters per pixel of the image
+let bgOffX = 0;           // world X offset
+let bgOffY = 0;           // world Y offset
+let bgRotation = 0;       // degrees clockwise
+
+// OSM tiles
+let osmEnabled = false;
+let osmOpacity = 0.6;
+let osmCenterLat = 55.93331;
+let osmCenterLon = 37.50526;
+let osmPreloadRadius = 2000;  // meters from origin to preload
+let osmLoadSpeed = 2;         // requests per second
+const OSM_TILE_SIZE = 256;
+const OSM_MAX_ZOOM = 19;
+const EARTH_CIRC = 40075016.686;
+let osmTileCache = {};         // key -> Image, never evicted
+let osmLoadingTiles = new Set();
+let osmLoadQueue = [];
+let osmLoadTimer = null;
+
+// Undo/Redo
+let undoStack = [];
+let redoStack = [];
+
+function saveState() {
+  undoStack.push(JSON.stringify({nodes,edges,schedules,params,nextNodeId,nextEdgeId}));
+  if (undoStack.length > 50) undoStack.shift();
+  redoStack = [];
+}
+function undo() {
+  if (!undoStack.length) return;
+  redoStack.push(JSON.stringify({nodes,edges,schedules,params,nextNodeId,nextEdgeId}));
+  const s = JSON.parse(undoStack.pop());
+  nodes = s.nodes; edges = s.edges; schedules = s.schedules; params = s.params;
+  nextNodeId = s.nextNodeId; nextEdgeId = s.nextEdgeId;
+  selectedNode = selectedEdge = null; edgeFromNode = null; roadFromNode = null;
+  updateProps(); updateParamsTable(); updateScheduleList();
+  render();
+}
+function redo() {
+  if (!redoStack.length) return;
+  undoStack.push(JSON.stringify({nodes,edges,schedules,params,nextNodeId,nextEdgeId}));
+  const s = JSON.parse(redoStack.pop());
+  nodes = s.nodes; edges = s.edges; schedules = s.schedules; params = s.params;
+  nextNodeId = s.nextNodeId; nextEdgeId = s.nextEdgeId;
+  selectedNode = selectedEdge = null; edgeFromNode = null; roadFromNode = null;
+  updateProps(); updateParamsTable(); updateScheduleList();
+  render();
+}
+
+// ============================================================
+// CANVAS SETUP
+// ============================================================
+const canvas = document.getElementById('mapCanvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvasWrap');
+
+function resize() {
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+  render();
+}
+window.addEventListener('resize', resize);
+
+// ============================================================
+// COORDINATE TRANSFORMS
+// ============================================================
+function worldToScreen(wx, wy) {
+  return { x: (wx + pan.x) * zoom + canvas.width/2, y: (-wy + pan.y) * zoom + canvas.height/2 };
+}
+function screenToWorld(sx, sy) {
+  return { x: (sx - canvas.width/2) / zoom - pan.x, y: -((sy - canvas.height/2) / zoom - pan.y) };
+}
+function snapToGrid(v) {
+  if (!snapEnabled) return v;
+  const step = niceGridStep();
+  return Math.round(v / step) * step;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#fafafa';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawBackground();
+  drawGrid();
+  drawEdges();
+  drawNodes();
+  drawEdgePreview();
+  drawScaleBar();
+  updateStatus();
+}
+
+function drawBackground() {
+  // OSM tiles first (behind custom image)
+  if (osmEnabled) drawOSMTiles();
+  // Custom background image
+  if (!bgImage || !bgVisible) return;
+  ctx.save();
+  ctx.globalAlpha = bgOpacityVal;
+  const topLeft = worldToScreen(bgOffX, bgOffY);
+  const bottomRight = worldToScreen(bgOffX + bgImage.width * bgScaleVal, bgOffY - bgImage.height * bgScaleVal);
+  const drawW = bottomRight.x - topLeft.x;
+  const drawH = bottomRight.y - topLeft.y;
+  if (bgRotation !== 0) {
+    const rad = bgRotation * Math.PI / 180;
+    ctx.translate(topLeft.x, topLeft.y);
+    ctx.rotate(-rad);
+    ctx.drawImage(bgImage, 0, 0, drawW, drawH);
+  } else {
+    ctx.drawImage(bgImage, topLeft.x, topLeft.y, drawW, drawH);
+  }
+  ctx.restore();
+}
+
+// ============================================================
+// OSM TILE SYSTEM
+// ============================================================
+function osmResolution(z) {
+  // Meters per pixel at given OSM zoom level
+  return EARTH_CIRC * Math.cos(osmCenterLat * Math.PI / 180) / (256 * Math.pow(2, z));
+}
+
+const OSM_MIN_ZOOM = 2;
+const OSM_PREFERRED_MAX_ZOOM = 19;
+
+function osmZoomLevel() {
+  // Pick OSM zoom where each tile is at least 150 screen pixels for sharpness
+  const minTileScreenPx = 150;
+  const minRes = minTileScreenPx / (OSM_TILE_SIZE * zoom);
+  let bestZ = OSM_MIN_ZOOM;
+  for (let z = OSM_MIN_ZOOM; z <= OSM_PREFERRED_MAX_ZOOM; z++) {
+    if (osmResolution(z) >= minRes) bestZ = z;
+  }
+  return bestZ;
+}
+
+function latLonToWorld(lat, lon) {
+  const mPerDegLat = EARTH_CIRC / 360;
+  const mPerDegLon = mPerDegLat * Math.cos(osmCenterLat * Math.PI / 180);
+  const x = (lon - osmCenterLon) * mPerDegLon;
+  const y = (lat - osmCenterLat) * mPerDegLat;
+  return {x, y};
+}
+
+function worldToLatLon(wx, wy) {
+  const mPerDegLat = EARTH_CIRC / 360;
+  const mPerDegLon = mPerDegLat * Math.cos(osmCenterLat * Math.PI / 180);
+  const lon = osmCenterLon + wx / mPerDegLon;
+  const lat = osmCenterLat + wy / mPerDegLat;
+  return {lat, lon};
+}
+
+function latLonToTile(lat, lon, z) {
+  const n = Math.pow(2, z);
+  const x = Math.floor((lon + 180) / 360 * n);
+  const latRad = lat * Math.PI / 180;
+  const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1/Math.cos(latRad)) / Math.PI) / 2 * n);
+  return {x: Math.max(0, Math.min(n-1, x)), y: Math.max(0, Math.min(n-1, y)), z};
+}
+
+function tileToLatLon(tx, ty, z) {
+  const n = Math.pow(2, z);
+  const lon = tx / n * 360 - 180;
+  const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * ty / n)));
+  const lat = latRad * 180 / Math.PI;
+  return {lat, lon};
+}
+
+let osmQueuedKeys = new Set(); // fast duplicate check
+
+function loadOneTile() {
+  while (osmLoadQueue.length > 0) {
+    const item = osmLoadQueue.shift();
+    osmQueuedKeys.delete(item.key);
+    if (osmTileCache[item.key] || osmLoadingTiles.has(item.key)) continue;
+    osmLoadingTiles.add(item.key);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    const tileKey = item.key;
+    img.onload = () => {
+      osmTileCache[tileKey] = img;
+      osmLoadingTiles.delete(tileKey);
+      render();
+    };
+    img.onerror = () => {
+      osmLoadingTiles.delete(tileKey);
+    };
+    img.src = `https://tile.openstreetmap.org/${item.z}/${item.x}/${item.y}.png`;
+    return; // one at a time
+  }
+}
+
+function startLoadTimer() {
+  if (osmLoadTimer) return;
+  // Load first batch immediately
+  for (let i = 0; i < osmLoadSpeed && osmLoadQueue.length > 0; i++) {
+    loadOneTile();
+  }
+  osmLoadTimer = setInterval(() => {
+    if (osmLoadQueue.length === 0) {
+      clearInterval(osmLoadTimer);
+      osmLoadTimer = null;
+      return;
+    }
+    for (let i = 0; i < osmLoadSpeed && osmLoadQueue.length > 0; i++) {
+      loadOneTile();
+    }
+  }, 1000);
+}
+
+function queueTile(z, x, y) {
+  const key = `${z}/${x}/${y}`;
+  if (osmTileCache[key] || osmLoadingTiles.has(key) || osmQueuedKeys.has(key)) return;
+  osmQueuedKeys.add(key);
+  osmLoadQueue.push({z, x, y, key});
+}
+
+let osmPreloadThrottle = 0;
+
+function preloadOSMRegion() {
+  if (!osmEnabled) return;
+  // Throttle: only queue new tiles every 3 seconds
+  const now = Date.now();
+  if (now - osmPreloadThrottle < 3000 && osmLoadQueue.length > 0) return;
+  osmPreloadThrottle = now;
+  
+  const R = osmPreloadRadius;
+  const tlLL = worldToLatLon(-R, R);
+  const brLL = worldToLatLon(R, -R);
+  
+  const z = osmZoomLevel();
+  const tileTL = latLonToTile(tlLL.lat, tlLL.lon, z);
+  const tileBR = latLonToTile(brLL.lat, brLL.lon, z);
+  
+  let count = 0;
+  const MAX_PRELOAD = 200;
+  for (let tx = tileTL.x; tx <= tileBR.x && count < MAX_PRELOAD; tx++) {
+    for (let ty = tileTL.y; ty <= tileBR.y && count < MAX_PRELOAD; ty++) {
+      queueTile(z, tx, ty);
+      count++;
+    }
+  }
+  startLoadTimer();
+}
+
+function drawOSMTiles() {
+  const z = osmZoomLevel();
+  const res = osmResolution(z);
+  const scale = res * zoom;
+
+  const tl = screenToWorld(0, 0);
+  const br = screenToWorld(canvas.width, canvas.height);
+  const tlLL = worldToLatLon(tl.x, tl.y);
+  const brLL = worldToLatLon(br.x, br.y);
+
+  const minLat = Math.min(tlLL.lat, brLL.lat);
+  const maxLat = Math.max(tlLL.lat, brLL.lat);
+  const minLon = Math.min(tlLL.lon, brLL.lon);
+  const maxLon = Math.max(tlLL.lon, brLL.lon);
+
+  ctx.save();
+  ctx.globalAlpha = osmOpacity;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  // Draw tiles at current zoom level
+  const tileTL = latLonToTile(maxLat, minLon, z);
+  const tileBR = latLonToTile(minLat, maxLon, z);
+  let missingCount = 0;
+
+  for (let tx = tileTL.x; tx <= tileBR.x; tx++) {
+    for (let ty = tileTL.y; ty <= tileBR.y; ty++) {
+      const key = `${z}/${tx}/${ty}`;
+      const img = osmTileCache[key];
+      if (img) {
+        const corner = tileToLatLon(tx, ty, z);
+        const cw = latLonToWorld(corner.lat, corner.lon);
+        const cs = worldToScreen(cw.x, cw.y);
+        const tileSizeScreen = OSM_TILE_SIZE * scale;
+        ctx.drawImage(img, cs.x, cs.y, tileSizeScreen, tileSizeScreen);
+      } else {
+        queueTile(z, tx, ty);
+        missingCount++;
+      }
+    }
+  }
+
+  // If many tiles missing at current zoom, draw a lower zoom as background
+  if (missingCount > 2) {
+    for (let fz = z - 1; fz >= OSM_MIN_ZOOM; fz--) {
+      const fRes = osmResolution(fz);
+      const fScale = fRes * zoom;
+      const fTileTL = latLonToTile(maxLat, minLon, fz);
+      const fTileBR = latLonToTile(minLat, maxLon, fz);
+      let found = false;
+      for (let ftx = fTileTL.x; ftx <= fTileBR.x; ftx++) {
+        for (let fty = fTileTL.y; fty <= fTileBR.y; fty++) {
+          const fImg = osmTileCache[`${fz}/${ftx}/${fty}`];
+          if (fImg) {
+            found = true;
+            const corner = tileToLatLon(ftx, fty, fz);
+            const cw = latLonToWorld(corner.lat, corner.lon);
+            const cs = worldToScreen(cw.x, cw.y);
+            const tileSizeScreen = OSM_TILE_SIZE * fScale;
+            ctx.drawImage(fImg, cs.x, cs.y, tileSizeScreen, tileSizeScreen);
+          }
+        }
+      }
+      if (found) break; // only use the closest lower zoom
+    }
+  }
+
+  ctx.restore();
+
+  preloadOSMRegion();
+
+  // OSM attribution
+  ctx.save();
+  ctx.font = '9px Segoe UI';
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('© OpenStreetMap', canvas.width - 4, canvas.height - 4);
+  ctx.restore();
+}
+
+function niceGridStep() {
+  const targetPx = 80;
+  const niceSteps = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000];
+  for (const s of niceSteps) {
+    if (s * zoom >= targetPx * 0.4) return s;
+  }
+  return niceSteps[niceSteps.length - 1];
+}
+
+function drawGrid() {
+  const step = niceGridStep();
+  const stepPx = step * zoom;
+  if (stepPx < 6) return;
+
+  const tl = screenToWorld(0, 0);
+  const br = screenToWorld(canvas.width, canvas.height);
+  const startX = Math.floor(tl.x / step) * step;
+  const startY = Math.floor(br.y / step) * step;
+
+  ctx.strokeStyle = '#d0d0d0';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  for (let wx = startX; wx <= br.x; wx += step) {
+    const s = worldToScreen(wx, 0);
+    ctx.moveTo(s.x, 0);
+    ctx.lineTo(s.x, canvas.height);
+  }
+  for (let wy = startY; wy <= tl.y; wy += step) {
+    const s = worldToScreen(0, wy);
+    ctx.moveTo(0, s.y);
+    ctx.lineTo(canvas.width, s.y);
+  }
+  ctx.stroke();
+
+  // Grid step labels along bottom (X axis)
+  if (stepPx > 30) {
+    ctx.save();
+    ctx.font = '9px Segoe UI';
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    const labelY = canvas.height - 14;
+    for (let wx = startX; wx <= br.x; wx += step) {
+      if (wx === 0) continue;
+      const s = worldToScreen(wx, 0);
+      if (s.x < 30 || s.x > canvas.width - 30) continue;
+      const label = step >= 1000 ? (wx/1000)+'км' : wx+'м';
+      ctx.fillText(label, s.x, labelY);
+    }
+    ctx.restore();
+  }
+
+  // Grid step labels along right (Y axis)
+  if (stepPx > 30) {
+    ctx.save();
+    ctx.font = '9px Segoe UI';
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    const labelX = canvas.width - 30;
+    for (let wy = startY; wy <= tl.y; wy += step) {
+      if (wy === 0) continue;
+      const s = worldToScreen(0, wy);
+      if (s.y < 14 || s.y > canvas.height - 14) continue;
+      const label = step >= 1000 ? (wy/1000)+'км' : wy+'м';
+      ctx.fillText(label, labelX, s.y);
+    }
+    ctx.restore();
+  }
+
+  // Origin cross
+  const o = worldToScreen(0, 0);
+  ctx.strokeStyle = '#b0b0b0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(o.x, 0); ctx.lineTo(o.x, canvas.height);
+  ctx.moveTo(0, o.y); ctx.lineTo(canvas.width, o.y);
+  ctx.stroke();
+}
+
+function drawScaleBar() {
+  const targetPx = 120;
+  const niceLengths = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
+  let barWorld = niceLengths[0];
+  for (const l of niceLengths) {
+    if (l * zoom >= targetPx * 0.5) { barWorld = l; break; }
+  }
+  const barPx = barWorld * zoom;
+  const x = canvas.width - barPx - 20;
+  const y = canvas.height - 24;
+
+  ctx.save();
+  // Background
+  ctx.fillStyle = 'rgba(250,250,250,0.8)';
+  ctx.fillRect(x - 4, y - 14, barPx + 8, 22);
+  // Bar
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y); ctx.lineTo(x + barPx, y);
+  // End ticks
+  ctx.moveTo(x, y - 5); ctx.lineTo(x, y + 2);
+  ctx.moveTo(x + barPx, y - 5); ctx.lineTo(x + barPx, y + 2);
+  ctx.stroke();
+  // Label
+  ctx.font = 'bold 10px Segoe UI';
+  ctx.fillStyle = '#333';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  const label = barWorld >= 1000 ? (barWorld/1000) + ' км' : barWorld + ' м';
+  ctx.fillText(label, x + barPx / 2, y - 4);
+  ctx.restore();
+}
+
+function drawEdges() {
+  // Track which bidirectional label pairs have been drawn to avoid overlap
+  const drawnLabels = new Set();
+
+  // Count parallel edges between same node pair for visual offset
+  const pairCounts = {};
+  const pairIndex = {};
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    const lo = Math.min(e.from, e.to), hi = Math.max(e.from, e.to);
+    const key = `${lo}-${hi}`;
+    if (!pairCounts[key]) pairCounts[key] = 0;
+    pairCounts[key]++;
+  }
+  const pairCurrent = {};
+
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    const n1 = nodes.find(n => n.id === e.from);
+    const n2 = nodes.find(n => n.id === e.to);
+    if (!n1 || !n2) continue;
+    const p1 = worldToScreen(n1.x, n1.y);
+    const p2 = worldToScreen(n2.x, n2.y);
+
+    // Visual offset for parallel edges
+    const lo = Math.min(e.from, e.to), hi = Math.max(e.from, e.to);
+    const key = `${lo}-${hi}`;
+    if (!pairCurrent[key]) pairCurrent[key] = 0;
+    const idx = pairCurrent[key]++;
+    const total = pairCounts[key];
+    let offsetX = 0, offsetY = 0;
+    if (total > 1) {
+      const dx = p2.x - p1.x, dy = p2.y - p1.y;
+      const len = Math.hypot(dx, dy);
+      if (len > 0) {
+        // Perpendicular direction
+        const nx = -dy / len, ny = dx / len;
+        const spacing = 4; // pixels between parallel edges
+        const offset = (idx - (total - 1) / 2) * spacing;
+        offsetX = nx * offset;
+        offsetY = ny * offset;
+      }
+    }
+
+    const color = EDGE_COLORS[e.transport] || '#999';
+    const dash = EDGE_STYLES[e.transport] || [];
+    const isSel = (selectedEdge === i);
+    const isHov = (hoveredEdge === i);
+
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isSel ? 3.5 : isHov ? 3 : 2.5;
+    ctx.setLineDash(dash.map(d => d * zoom));
+    if (isSel) { ctx.shadowColor = color; ctx.shadowBlur = 6; }
+    ctx.beginPath();
+    ctx.moveTo(p1.x + offsetX, p1.y + offsetY);
+    ctx.lineTo(p2.x + offsetX, p2.y + offsetY);
+    ctx.stroke();
+    ctx.restore();
+
+    // Direction arrow at 65% from start
+    if (zoom > 0.15) {
+      const t = 0.65;
+      const ax = p1.x + (p2.x - p1.x) * t;
+      const ay = p1.y + (p2.y - p1.y) * t;
+      const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+      const arrowLen = 8;
+      const arrowWidth = 4;
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(angle);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(arrowLen, 0);
+      ctx.lineTo(-arrowLen / 2, -arrowWidth);
+      ctx.lineTo(-arrowLen / 2, arrowWidth);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Label along edge — skip if reverse edge with same name already drawn, skip very short edges
+    const screenLen = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    if (zoom > 0.4 && e.name && e.length > 10 && screenLen > 30) {
+      const lo = Math.min(e.from, e.to), hi = Math.max(e.from, e.to);
+      const labelKey = `${lo}-${hi}-${e.transport}-${e.name}`;
+      if (!drawnLabels.has(labelKey)) {
+        drawnLabels.add(labelKey);
+        const mx = (p1.x + p2.x) / 2;
+        const my = (p1.y + p2.y) / 2;
+        let angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        // Keep text readable (not upside down)
+        if (angle > Math.PI / 2) angle -= Math.PI;
+        else if (angle < -Math.PI / 2) angle += Math.PI;
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.rotate(angle);
+        ctx.font = `8px Segoe UI`;
+        ctx.fillStyle = '#555';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(e.name, 0, -3);
+        ctx.restore();
+      }
+    }
+  }
+}
+
+function drawNodes() {
+  for (let i = 0; i < nodes.length; i++) {
+    const n = nodes[i];
+    const p = worldToScreen(n.x, n.y);
+    const color = NODE_COLORS[n.type] || '#999';
+    const r = NODE_RADII[n.type] || 6;
+    const isSel = (selectedNode === i);
+    const isHov = (hoveredNode === i);
+    const isEdgeFrom = (edgeFromNode === i);
+
+    ctx.save();
+    if (n.type === 'poi') {
+      // Diamond
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y - r);
+      ctx.lineTo(p.x + r, p.y);
+      ctx.lineTo(p.x, p.y + r);
+      ctx.lineTo(p.x - r, p.y);
+      ctx.closePath();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    }
+    ctx.fillStyle = color;
+    if (isSel) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
+    if (isEdgeFrom) { ctx.strokeStyle = '#ff0'; ctx.lineWidth = 3; ctx.stroke(); }
+    if (isHov && !isSel) { ctx.strokeStyle = '#cdd6f4'; ctx.lineWidth = 1.5; ctx.stroke(); }
+    ctx.fill();
+    ctx.restore();
+
+    // Label (name) — hide for intersections, word-wrap
+    let labelOffset = r + 2;
+    if (zoom > 0.3 && n.name && n.type !== 'intersection') {
+      ctx.save();
+      ctx.font = `9px Segoe UI`;
+      ctx.fillStyle = '#333';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const maxW = 70;
+      const lineH = 11;
+      const words = n.name.split(' ');
+      let line = '';
+      const lines = [];
+      for (const w of words) {
+        const test = line ? line + ' ' + w : w;
+        if (ctx.measureText(test).width > maxW && line) {
+          lines.push(line);
+          line = w;
+        } else {
+          line = test;
+        }
+      }
+      if (line) lines.push(line);
+      for (let li = 0; li < lines.length; li++) {
+        ctx.fillText(lines[li], p.x, p.y + labelOffset);
+        labelOffset += lineH;
+      }
+      ctx.restore();
+    }
+    // ID below node (or below name)
+    if (zoom > 0.3) {
+      ctx.save();
+      ctx.font = `bold 9px Segoe UI`;
+      ctx.fillStyle = '#666';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('#' + n.id, p.x, p.y + labelOffset);
+      ctx.restore();
+    }
+  }
+}
+
+function drawEdgePreview() {
+  const fromIdx = tool === 'addEdge' ? edgeFromNode : tool === 'drawRoad' ? roadFromNode : null;
+  if (fromIdx === null || fromIdx >= nodes.length) return;
+  const n = nodes[fromIdx];
+  const p1 = worldToScreen(n.x, n.y);
+  const mp = lastMousePos;
+  if (!mp) return;
+
+  // Check for road snap point (prefer existing nodes, then edge midpoints)
+  let snapScreen = null;
+  let snapNodeIdx = null;
+  if (tool === 'drawRoad' && roadSnapEnabled) {
+    const w = screenToWorld(mp.x, mp.y);
+    const snapThresh = Math.min(15 / zoom, 40);
+    // Prefer snapping to existing nodes (especially near intersections)
+    const nearNode = closestNodeWorld(w.x, w.y);
+    if (nearNode && nearNode.dist < snapThresh) {
+      snapNodeIdx = nearNode.nodeIdx;
+      snapScreen = worldToScreen(nodes[nearNode.nodeIdx].x, nodes[nearNode.nodeIdx].y);
+    } else {
+      const snap = closestPointOnEdgeWorld(w.x, w.y);
+      if (snap && snap.dist < snapThresh) {
+        snapScreen = worldToScreen(snap.point.x, snap.point.y);
+      }
+    }
+  }
+
+  const endPoint = snapScreen || mp;
+  ctx.save();
+  ctx.strokeStyle = '#ffeb3b';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(endPoint.x, endPoint.y);
+  ctx.stroke();
+
+  // Snap indicator circle
+  if (snapScreen) {
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,235,59,0.4)';
+    ctx.beginPath();
+    ctx.arc(snapScreen.x, snapScreen.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffeb3b';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ============================================================
+// HIT TESTING
+// ============================================================
+function hitNode(sx, sy) {
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const p = worldToScreen(n.x, n.y);
+    const r = (NODE_RADII[n.type] || 6) + 5;
+    const dx = sx - p.x, dy = sy - p.y;
+    if (dx*dx + dy*dy <= r*r) return i;
+  }
+  return null;
+}
+
+function hitEdge(sx, sy) {
+  let best = null, bestDist = 8;
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    const n1 = nodes.find(n => n.id === e.from);
+    const n2 = nodes.find(n => n.id === e.to);
+    if (!n1 || !n2) continue;
+    const p1 = worldToScreen(n1.x, n1.y);
+    const p2 = worldToScreen(n2.x, n2.y);
+    const d = distToSegment(sx, sy, p1.x, p1.y, p2.x, p2.y);
+    if (d < bestDist) { bestDist = d; best = i; }
+  }
+  return best;
+}
+
+function distToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len2 = dx*dx + dy*dy;
+  if (len2 === 0) return Math.hypot(px - x1, py - y1);
+  let t = ((px - x1)*dx + (py - y1)*dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (x1 + t*dx), py - (y1 + t*dy));
+}
+
+// Find closest point on any edge to a world coordinate (for road snapping)
+function closestPointOnEdgeWorld(wx, wy) {
+  let best = null, bestDist = Infinity;
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    const n1 = nodes.find(n => n.id === e.from);
+    const n2 = nodes.find(n => n.id === e.to);
+    if (!n1 || !n2) continue;
+    const dx = n2.x - n1.x, dy = n2.y - n1.y;
+    const len2 = dx*dx + dy*dy;
+    let t = len2 === 0 ? 0 : ((wx - n1.x)*dx + (wy - n1.y)*dy) / len2;
+    t = Math.max(0.02, Math.min(0.98, t)); // avoid endpoints (those are nodes)
+    const px = n1.x + t * dx, py = n1.y + t * dy;
+    const d = Math.hypot(wx - px, wy - py);
+    if (d < bestDist) { bestDist = d; best = {edgeIdx: i, point: {x: px, y: py}, t, dist: d}; }
+  }
+  return best;
+}
+
+// Find closest existing node to a world coordinate (for road snapping to nodes)
+function closestNodeWorld(wx, wy) {
+  let best = null, bestDist = Infinity;
+  for (let i = 0; i < nodes.length; i++) {
+    const n = nodes[i];
+    const d = Math.hypot(wx - n.x, wy - n.y);
+    if (d < bestDist) { bestDist = d; best = {nodeIdx: i, dist: d}; }
+  }
+  return best;
+}
+
+// Split an edge at a world point, creating a new intersection node
+// If a node already exists very close to the split point, reuse it
+function splitEdgeAtPoint(edgeIdx, wx, wy) {
+  const e = edges[edgeIdx];
+  const origFrom = e.from, origTo = e.to;
+  const n1 = nodes.find(n => n.id === origFrom);
+  const n2 = nodes.find(n => n.id === origTo);
+  if (!n1 || !n2) return null;
+
+  // Check if a node already exists very close to the split point
+  const MERGE_DIST = 1; // world units
+  let existingIdx = null;
+  for (let i = 0; i < nodes.length; i++) {
+    const nd = nodes[i];
+    if (Math.hypot(nd.x - wx, nd.y - wy) < MERGE_DIST && nd.id !== origFrom && nd.id !== origTo) {
+      existingIdx = i;
+      break;
+    }
+  }
+
+  let newNodeIdx, newNodeId;
+  if (existingIdx !== null) {
+    // Reuse existing node
+    newNodeIdx = existingIdx;
+    newNodeId = nodes[existingIdx].id;
+  } else {
+    // Create new intersection node
+    const newNode = {id: nextNodeId++, type: 'intersection', name: '', x: Math.round(wx), y: Math.round(wy)};
+    nodes.push(newNode);
+    newNodeIdx = nodes.length - 1;
+    newNodeId = newNode.id;
+  }
+
+  const len1 = Math.max(1, Math.round(Math.hypot(wx - n1.x, wy - n1.y)));
+  const len2 = Math.max(1, Math.round(Math.hypot(n2.x - wx, n2.y - wy)));
+
+  // Modify original edge: origFrom → newNode
+  e.to = newNodeId;
+  e.length = len1;
+
+  // New edge: newNode → origTo
+  edges.push({id: nextEdgeId++, from: newNodeId, to: origTo, transport: e.transport, length: len2, name: e.name});
+
+  // Split reverse edge if bidirectional
+  const revIdx = edges.findIndex(e2 => e2.id !== e.id && e2.from === origTo && e2.to === origFrom && e2.transport === e.transport);
+  if (revIdx >= 0) {
+    const rev = edges[revIdx];
+    rev.to = newNodeId;
+    rev.length = len2;
+    edges.push({id: nextEdgeId++, from: newNodeId, to: origFrom, transport: rev.transport, length: len1, name: rev.name});
+  }
+
+  return newNodeIdx;
+}
+
+// Find intersection point of two line segments (world coords)
+// Returns {x, y} or null if no intersection
+function segmentIntersection(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2) {
+  const dx1 = ax2 - ax1, dy1 = ay2 - ay1;
+  const dx2 = bx2 - bx1, dy2 = by2 - by1;
+  const denom = dx1 * dy2 - dy1 * dx2;
+  if (Math.abs(denom) < 1e-10) return null; // parallel
+  const t = ((bx1 - ax1) * dy2 - (by1 - ay1) * dx2) / denom;
+  const u = ((bx1 - ax1) * dy1 - (by1 - ay1) * dx1) / denom;
+  if (t > 0.01 && t < 0.99 && u > 0.01 && u < 0.99) {
+    return {x: ax1 + t * dx1, y: ay1 + t * dy1};
+  }
+  return null;
+}
+
+// After creating a new edge, find all existing edges that cross it,
+// create intersection nodes, and split BOTH the existing edges AND the new edge
+function autoIntersectEdge(newEdgeIdx) {
+  if (!autoIntersectEnabled) return;
+  const newEdge = edges[newEdgeIdx];
+  const nA = nodes.find(n => n.id === newEdge.from);
+  const nB = nodes.find(n => n.id === newEdge.to);
+  if (!nA || !nB) return;
+
+  // Collect all intersections with existing edges
+  const intersections = [];
+  for (let i = 0; i < edges.length; i++) {
+    if (i === newEdgeIdx) continue;
+    const e = edges[i];
+    // Skip if sharing a node (they meet at a node, not mid-segment)
+    if (e.from === newEdge.from || e.from === newEdge.to || e.to === newEdge.from || e.to === newEdge.to) continue;
+    const n1 = nodes.find(n => n.id === e.from);
+    const n2 = nodes.find(n => n.id === e.to);
+    if (!n1 || !n2) continue;
+    const pt = segmentIntersection(nA.x, nA.y, nB.x, nB.y, n1.x, n1.y, n2.x, n2.y);
+    if (pt) {
+      intersections.push({edgeIdx: i, point: pt});
+    }
+  }
+
+  if (intersections.length === 0) return;
+
+  // Sort intersections by distance from newEdge.from
+  intersections.sort((a, b) => {
+    const da = Math.hypot(a.point.x - nA.x, a.point.y - nA.y);
+    const db = Math.hypot(b.point.x - nA.x, b.point.y - nA.y);
+    return da - db;
+  });
+
+  // Step 1: Split all existing crossing edges at intersection points
+  // Process from last to first to avoid index shifts
+  const intersectionNodes = []; // {nodeId, point} — nodes created on the new edge's path
+  for (let i = intersections.length - 1; i >= 0; i--) {
+    const isect = intersections[i];
+    const newNodeIdx = splitEdgeAtPoint(isect.edgeIdx, isect.point.x, isect.point.y);
+    if (newNodeIdx !== null) {
+      intersectionNodes.push({nodeId: nodes[newNodeIdx].id, point: isect.point});
+    }
+  }
+
+  // Sort intersection nodes by distance from newEdge.from (along the new edge)
+  intersectionNodes.sort((a, b) => {
+    const da = Math.hypot(a.point.x - nA.x, a.point.y - nA.y);
+    const db = Math.hypot(b.point.x - nA.x, b.point.y - nA.y);
+    return da - db;
+  });
+
+  // Step 2: Remove the original new edge and recreate as segments
+  const transport = newEdge.transport;
+  const name = newEdge.name;
+  const bidir = edges.some(e => e.from === newEdge.to && e.to === newEdge.from && e.transport === transport);
+
+  // Remove the new edge (and its reverse if bidirectional)
+  edges.splice(newEdgeIdx, 1);
+  if (bidir) {
+    const revIdx = edges.findIndex(e => e.from === newEdge.to && e.to === newEdge.from && e.transport === transport);
+    if (revIdx >= 0) edges.splice(revIdx, 1);
+  }
+
+  // Build the sequence of node IDs along the new edge: from → intersections → to
+  const pathNodeIds = [newEdge.from];
+  for (const in_ of intersectionNodes) {
+    pathNodeIds.push(in_.nodeId);
+  }
+  pathNodeIds.push(newEdge.to);
+
+  // Create edge segments between consecutive nodes
+  for (let i = 0; i < pathNodeIds.length - 1; i++) {
+    const fromId = pathNodeIds[i];
+    const toId = pathNodeIds[i + 1];
+    const nf = nodes.find(n => n.id === fromId);
+    const nt = nodes.find(n => n.id === toId);
+    if (!nf || !nt) continue;
+    const len = Math.max(1, Math.round(Math.hypot(nt.x - nf.x, nt.y - nf.y)));
+    edges.push({id: nextEdgeId++, from: fromId, to: toId, transport, length: len, name});
+    if (bidir) {
+      edges.push({id: nextEdgeId++, from: toId, to: fromId, transport, length: len, name});
+    }
+  }
+}
+
+// ============================================================
+// MOUSE HANDLING
+// ============================================================
+let lastMousePos = null;
+let isPanning = false;
+let panStart = null;
+
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+
+  // Middle or right button = pan
+  if (e.button === 1 || e.button === 2) {
+    isPanning = true;
+    panStart = {x: e.clientX, y: e.clientY, px: pan.x, py: pan.y};
+    e.preventDefault();
+    return;
+  }
+
+  if (e.button !== 0) return;
+
+  const ni = hitNode(sx, sy);
+
+  if (tool === 'select') {
+    if (ni !== null) {
+      selectedNode = ni;
+      selectedEdge = null;
+      dragging = {index: ni, startX: nodes[ni].x, startY: nodes[ni].y};
+      saveState();
+    } else {
+      const ei = hitEdge(sx, sy);
+      if (ei !== null) {
+        selectedEdge = ei;
+        selectedNode = null;
+      } else {
+        selectedNode = null;
+        selectedEdge = null;
+        // Start pan with left button on empty space
+        isPanning = true;
+        panStart = {x: e.clientX, y: e.clientY, px: pan.x, py: pan.y};
+      }
+    }
+    updateProps();
+    render();
+  } else if (tool === 'addNode') {
+    const w = screenToWorld(sx, sy);
+    const type = document.getElementById('nodeType').value;
+    let placedOnEdge = false;
+
+    // If clicking near an edge (and not on a node), split the edge
+    if (ni === null) {
+      const ei = hitEdge(sx, sy);
+      if (ei !== null) {
+        const e = edges[ei];
+        const n1 = nodes.find(nd => nd.id === e.from);
+        const n2 = nodes.find(nd => nd.id === e.to);
+        if (n1 && n2) {
+          // Find closest point on edge to click
+          const dx = n2.x - n1.x, dy = n2.y - n1.y;
+          const len2 = dx*dx + dy*dy;
+          let t = len2 === 0 ? 0 : ((w.x - n1.x)*dx + (w.y - n1.y)*dy) / len2;
+          t = Math.max(0.02, Math.min(0.98, t));
+          const px = n1.x + t * dx, py = n1.y + t * dy;
+          saveState();
+          const newNodeIdx = splitEdgeAtPoint(ei, px, py);
+          if (newNodeIdx !== null) {
+            // Override type if not intersection
+            if (type !== 'intersection') {
+              nodes[newNodeIdx].type = type;
+            }
+            selectedNode = newNodeIdx;
+            selectedEdge = null;
+            placedOnEdge = true;
+          }
+        }
+      }
+    }
+
+    if (!placedOnEdge) {
+      const wx = snapToGrid(w.x);
+      const wy = snapToGrid(w.y);
+      saveState();
+      nodes.push({id: nextNodeId++, type, name: '', x: wx, y: wy});
+      selectedNode = nodes.length - 1;
+      selectedEdge = null;
+    }
+    updateProps();
+    render();
+  } else if (tool === 'addEdge') {
+    if (ni !== null) {
+      if (edgeFromNode === null) {
+        edgeFromNode = ni;
+        render();
+      } else if (edgeFromNode !== ni) {
+        // Create edge
+        const fromId = nodes[edgeFromNode].id;
+        const toId = nodes[ni].id;
+        const transport = document.getElementById('edgeTransport').value;
+        const bidir = document.getElementById('bidirCheck').checked;
+        const n1 = nodes[edgeFromNode], n2 = nodes[ni];
+        const len = Math.round(Math.hypot(n2.x - n1.x, n2.y - n1.y));
+        const name = transport === 'bus' ? 'Авт.' : transport === 'metro' ? 'Линия' : n1.name && n2.name ? `${n1.name} → ${n2.name}` : '';
+
+        saveState();
+        edges.push({id: nextEdgeId++, from: fromId, to: toId, transport, length: Math.max(len, 1), name});
+        if (bidir) {
+          edges.push({id: nextEdgeId++, from: toId, to: fromId, transport, length: Math.max(len, 1), name});
+        }
+        if (transport === 'car') addSidewalks(fromId, toId, bidir, name);
+        autoIntersectEdge(edges.length - (bidir ? 2 : 1));
+        edgeFromNode = null;
+        selectedEdge = edges.length - 1;
+        selectedNode = null;
+        updateProps();
+        render();
+      }
+    }
+  } else if (tool === 'drawRoad') {
+    // Road drawing: auto-create intersection nodes, snap to roads
+    let targetNodeIdx = ni;
+    let stateSaved = false;
+
+    // Snap to existing node or road edge
+    if (targetNodeIdx === null && roadSnapEnabled) {
+      const w = screenToWorld(sx, sy);
+      const snapThresh = Math.min(15 / zoom, 40);
+      // Prefer snapping to existing nodes (especially near intersections)
+      const nearNode = closestNodeWorld(w.x, w.y);
+      if (nearNode && nearNode.dist < snapThresh) {
+        targetNodeIdx = nearNode.nodeIdx;
+      } else {
+        const snap = closestPointOnEdgeWorld(w.x, w.y);
+        if (snap && snap.dist < snapThresh) {
+          saveState(); stateSaved = true;
+          targetNodeIdx = splitEdgeAtPoint(snap.edgeIdx, snap.point.x, snap.point.y);
+        }
+      }
+    }
+
+    // No existing node and no snap → create new intersection
+    if (targetNodeIdx === null) {
+      const w = screenToWorld(sx, sy);
+      const wx = snapToGrid(w.x);
+      const wy = snapToGrid(w.y);
+      if (!stateSaved) { saveState(); stateSaved = true; }
+      nodes.push({id: nextNodeId++, type: 'intersection', name: '', x: wx, y: wy});
+      targetNodeIdx = nodes.length - 1;
+    }
+
+    if (roadFromNode === null) {
+      // First click: set start node
+      roadFromNode = targetNodeIdx;
+      render();
+    } else if (roadFromNode !== targetNodeIdx) {
+      // Second+ click: create edge, continue drawing from endpoint
+      if (!stateSaved) { saveState(); stateSaved = true; }
+      const fromId = nodes[roadFromNode].id;
+      const toId = nodes[targetNodeIdx].id;
+      const transport = document.getElementById('edgeTransport').value;
+      const bidir = document.getElementById('bidirCheck').checked;
+      const n1 = nodes[roadFromNode], n2 = nodes[targetNodeIdx];
+      const len = Math.round(Math.hypot(n2.x - n1.x, n2.y - n1.y));
+      const edgeNameVal = document.getElementById('edgeName').value;
+      const name = edgeNameVal || (transport === 'bus' ? 'Авт.' : transport === 'metro' ? 'Линия' : n1.name && n2.name ? `${n1.name} → ${n2.name}` : '');
+
+      edges.push({id: nextEdgeId++, from: fromId, to: toId, transport, length: Math.max(len, 1), name});
+      if (bidir) {
+        edges.push({id: nextEdgeId++, from: toId, to: fromId, transport, length: Math.max(len, 1), name});
+      }
+      if (transport === 'car') addSidewalks(fromId, toId, bidir, name);
+      autoIntersectEdge(edges.length - (bidir ? 2 : 1));
+      roadFromNode = targetNodeIdx;
+      selectedEdge = edges.length - 1;
+      selectedNode = null;
+      updateProps();
+      render();
+    }
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+  lastMousePos = {x: sx, y: sy};
+
+  const w = screenToWorld(sx, sy);
+  document.getElementById('coordStatus').textContent = `x=${Math.round(w.x)} y=${Math.round(w.y)}`;
+  if (osmEnabled) {
+    const ll = worldToLatLon(w.x, w.y);
+    document.getElementById('latlonStatus').textContent = `${ll.lat.toFixed(5)}, ${ll.lon.toFixed(5)}`;
+  } else {
+    document.getElementById('latlonStatus').textContent = '';
+  }
+
+  if (isPanning && panStart) {
+    const dx = (e.clientX - panStart.x) / zoom;
+    const dy = (e.clientY - panStart.y) / zoom;
+    pan.x = panStart.px + dx;
+    pan.y = panStart.py + dy;
+    render();
+    return;
+  }
+
+  if (dragging !== null) {
+    const w = screenToWorld(sx, sy);
+    let nx = snapToGrid(w.x), ny = snapToGrid(w.y);
+    // Snap to nearest edge if close enough (visual feedback during drag)
+    const nd = nodes[dragging.index];
+    const snap = closestPointOnEdgeWorld(nx, ny);
+    const SNAP_DIST = 5;
+    if (snap && snap.dist < SNAP_DIST) {
+      const edge = edges[snap.edgeIdx];
+      if (edge.from !== nd.id && edge.to !== nd.id) {
+        nx = Math.round(snap.point.x);
+        ny = Math.round(snap.point.y);
+      }
+    }
+    nd.x = nx;
+    nd.y = ny;
+    updateProps();
+    render();
+    return;
+  }
+
+  // Hover
+  const ni = hitNode(sx, sy);
+  const ei = (ni === null) ? hitEdge(sx, sy) : null;
+  let needRender = false;
+  if (hoveredNode !== ni) { hoveredNode = ni; needRender = true; }
+  if (hoveredEdge !== ei) { hoveredEdge = ei; needRender = true; }
+
+  // Tooltip
+  const tip = document.getElementById('tooltip');
+  if (ni !== null) {
+    const n = nodes[ni];
+    tip.textContent = `#${n.id} ${n.name || n.type} (${n.x}, ${n.y})`;
+    tip.style.left = (e.clientX - wrap.getBoundingClientRect().left + 12) + 'px';
+    tip.style.top = (e.clientY - wrap.getBoundingClientRect().top - 20) + 'px';
+    tip.style.display = 'block';
+  } else if (ei !== null) {
+    const ed = edges[ei];
+    tip.textContent = `#${ed.id} ${ed.transport} ${ed.from}→${ed.to} ${ed.length}м`;
+    tip.style.left = (e.clientX - wrap.getBoundingClientRect().left + 12) + 'px';
+    tip.style.top = (e.clientY - wrap.getBoundingClientRect().top - 20) + 'px';
+    tip.style.display = 'block';
+  } else {
+    tip.style.display = 'none';
+  }
+
+  if (needRender || tool === 'addEdge' || tool === 'drawRoad') render();
+});
+
+canvas.addEventListener('mouseup', e => {
+  if (dragging !== null) {
+    // Check if dragged node is near an edge — if so, split the edge and attach
+    const ni = dragging.index;
+    const nd = nodes[ni];
+    const snap = closestPointOnEdgeWorld(nd.x, nd.y);
+    const SNAP_DIST = 5; // world units — distance to snap node to edge
+    if (snap && snap.dist < SNAP_DIST) {
+      const edge = edges[snap.edgeIdx];
+      // Don't split if this node is already an endpoint of the edge
+      if (edge.from !== nd.id && edge.to !== nd.id) {
+        // Move node to the closest point on the edge
+        nd.x = Math.round(snap.point.x);
+        nd.y = Math.round(snap.point.y);
+        // Split the edge at this node
+        splitEdgeAtExistingNode(snap.edgeIdx, ni);
+      }
+    }
+    dragging = null;
+    updateProps();
+    render();
+  }
+  if (isPanning) {
+    isPanning = false;
+    panStart = null;
+  }
+});
+
+// Split an edge at an existing node (used when dragging a node onto an edge)
+function splitEdgeAtExistingNode(edgeIdx, nodeIdx) {
+  const e = edges[edgeIdx];
+  const origFrom = e.from, origTo = e.to;
+  const nodeId = nodes[nodeIdx].id;
+  const n1 = nodes.find(n => n.id === origFrom);
+  const n2 = nodes.find(n => n.id === origTo);
+  const nd = nodes[nodeIdx];
+  if (!n1 || !n2) return;
+
+  const len1 = Math.max(1, Math.round(Math.hypot(nd.x - n1.x, nd.y - n1.y)));
+  const len2 = Math.max(1, Math.round(Math.hypot(n2.x - nd.x, n2.y - nd.y)));
+
+  // Modify original edge: origFrom → nodeId
+  e.to = nodeId;
+  e.length = len1;
+
+  // New edge: nodeId → origTo
+  edges.push({id: nextEdgeId++, from: nodeId, to: origTo, transport: e.transport, length: len2, name: e.name});
+
+  // Split reverse edge if bidirectional
+  const revIdx = edges.findIndex(e2 => e2.id !== e.id && e2.from === origTo && e2.to === origFrom && e2.transport === e.transport);
+  if (revIdx >= 0) {
+    const rev = edges[revIdx];
+    rev.to = nodeId;
+    rev.length = len2;
+    edges.push({id: nextEdgeId++, from: nodeId, to: origFrom, transport: rev.transport, length: len1, name: rev.name});
+  }
+}
+
+// Zoom buttons
+function zoomBy(factor) {
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  const wBefore = screenToWorld(cx, cy);
+  zoom *= factor;
+  zoom = Math.max(0.05, Math.min(10, zoom));
+  const wAfter = screenToWorld(cx, cy);
+  pan.x += wAfter.x - wBefore.x;
+  pan.y -= wAfter.y - wBefore.y;
+  render();
+}
+document.getElementById('zoomInBtn').addEventListener('click', () => zoomBy(1.3));
+document.getElementById('zoomOutBtn').addEventListener('click', () => zoomBy(1/1.3));
+
+// Mouse wheel zoom (centered on cursor)
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+  const wBefore = screenToWorld(sx, sy);
+  const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+  zoom *= factor;
+  zoom = Math.max(0.05, Math.min(10, zoom));
+  const wAfter = screenToWorld(sx, sy);
+  pan.x += wAfter.x - wBefore.x;
+  pan.y -= wAfter.y - wBefore.y;
+  render();
+}, {passive: false});
+
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+// Keyboard — use e.code for layout-independent shortcuts
+document.addEventListener('keydown', e => {
+  // Ctrl+Z / Ctrl+Shift+Z work even in input fields
+  if (e.ctrlKey && e.code === 'KeyZ' && !e.shiftKey) { e.preventDefault(); undo(); return; }
+  if (e.ctrlKey && e.code === 'KeyZ' && e.shiftKey) { e.preventDefault(); redo(); return; }
+  // Ctrl+S save even in input fields
+  if (e.ctrlKey && e.code === 'KeyS') { e.preventDefault(); saveToStorage(); return; }
+
+  // Other shortcuts only when not in input/select
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.code === 'KeyV') setTool('select');
+  if (e.code === 'KeyN') setTool('addNode');
+  if (e.code === 'KeyE') setTool('addEdge');
+  if (e.code === 'KeyR') setTool('drawRoad');
+  if (e.code === 'Escape') { roadFromNode = null; edgeFromNode = null; render(); }
+  if (e.key === 'Home') fitToView();
+  if (e.code === 'Equal' || e.code === 'NumpadAdd') zoomBy(1.3);
+  if (e.code === 'Minus' || e.code === 'NumpadSubtract') zoomBy(1/1.3);
+  if (e.code === 'ArrowLeft') { pan.x += 50 / zoom; render(); }
+  if (e.code === 'ArrowRight') { pan.x -= 50 / zoom; render(); }
+  if (e.code === 'ArrowUp') { pan.y += 50 / zoom; render(); }
+  if (e.code === 'ArrowDown') { pan.y -= 50 / zoom; render(); }
+  if (e.key === 'Delete' && selectedNode !== null) { deleteSelectedNode(); }
+  if (e.key === 'Delete' && selectedEdge !== null) { deleteSelectedEdge(); }
+});
+
+// ============================================================
+// TOOL SWITCHING
+// ============================================================
+function setTool(t) {
+  tool = t;
+  edgeFromNode = null;
+  roadFromNode = null;
+  document.querySelectorAll('#toolbar .tool-btn[data-tool]').forEach(b => b.classList.toggle('active', b.dataset.tool === t));
+  const names = {select:'Выбор',addNode:'Добавить узел',addEdge:'Добавить ребро',drawRoad:'Рисование дороги'};
+  document.getElementById('toolStatus').textContent = 'Режим: ' + (names[t]||t);
+  canvas.style.cursor = t === 'select' ? 'default' : 'crosshair';
+  // Switch tab to match tool
+  if (t === 'addNode') activateTab('nodeTab');
+  else if (t === 'addEdge' || t === 'drawRoad') activateTab('edgeTab');
+  render();
+}
+
+document.querySelectorAll('#toolbar .tool-btn[data-tool]').forEach(b => {
+  b.addEventListener('click', () => setTool(b.dataset.tool));
+});
+
+// ============================================================
+// PROPERTIES PANEL
+// ============================================================
+function updateProps() {
+  if (selectedNode !== null && selectedNode < nodes.length) {
+    const n = nodes[selectedNode];
+    document.getElementById('nodeId').value = n.id;
+    document.getElementById('nodeType').value = n.type;
+    document.getElementById('nodeName').value = n.name;
+    document.getElementById('nodeX').value = n.x;
+    document.getElementById('nodeY').value = n.y;
+    activateTab('nodeTab');
+  } else if (selectedEdge !== null && selectedEdge < edges.length) {
+    const e = edges[selectedEdge];
+    document.getElementById('edgeId').value = e.id;
+    document.getElementById('edgeTransport').value = e.transport;
+    document.getElementById('edgeFrom').value = e.from;
+    document.getElementById('edgeTo').value = e.to;
+    document.getElementById('edgeLen').value = e.length;
+    document.getElementById('edgeName').value = e.name;
+    // Check if reverse edge exists
+    const hasReverse = edges.some(e2 => e2.from === e.to && e2.to === e.from && e2.transport === e.transport);
+    document.getElementById('bidirCheck').checked = hasReverse;
+    // Check if sidewalk exists alongside this edge (via sidewalkOf property)
+    const ref = `${e.from}-${e.to}`;
+    const hasSidewalk = e.transport !== 'walk' && edges.some(e2 => e2.sidewalkOf === ref);
+    document.getElementById('sidewalkEdgeCheck').checked = hasSidewalk;
+    document.getElementById('sidewalkEdgeCheck').parentElement.style.display = e.transport === 'walk' ? 'none' : '';
+    document.getElementById('schedEdgeId').value = e.id;
+    updateScheduleList();
+    activateTab('edgeTab');
+  }
+  updateStatus();
+}
+
+function updateStatus() {
+  document.getElementById('countStatus').textContent = `Узлов: ${nodes.length} | Рёбер: ${edges.length}`;
+  document.getElementById('zoomStatus').textContent = `Масштаб: ${Math.round(zoom * 100)}%`;
+  // OSM status
+  const osmEl = document.getElementById('osmStatus');
+  if (osmEnabled) {
+    const loading = osmLoadQueue.length + osmLoadingTiles.size;
+    const cached = Object.keys(osmTileCache).length;
+    osmEl.textContent = loading > 0 ? `OSM: ${cached} ✅ ⏳${loading}` : `OSM: ${cached} ✅`;
+  } else {
+    osmEl.textContent = '';
+  }
+}
+
+// Node property changes
+['nodeId','nodeType','nodeName','nodeX','nodeY'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    if (selectedNode === null) return;
+    saveState();
+    const n = nodes[selectedNode];
+    n.id = parseInt(document.getElementById('nodeId').value) || n.id;
+    n.type = document.getElementById('nodeType').value;
+    n.name = document.getElementById('nodeName').value;
+    n.x = parseFloat(document.getElementById('nodeX').value) || n.x;
+    n.y = parseFloat(document.getElementById('nodeY').value) || n.y;
+    if (n.id >= nextNodeId) nextNodeId = n.id + 1;
+    render();
+  });
+});
+
+// Edge property changes — sync reverse edge for bidirectional edges
+['edgeId','edgeTransport','edgeLen','edgeName'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    if (selectedEdge === null) return;
+    saveState();
+    const e = edges[selectedEdge];
+    const oldTransport = e.transport;
+    e.id = parseInt(document.getElementById('edgeId').value) || e.id;
+    e.transport = document.getElementById('edgeTransport').value;
+    e.length = parseFloat(document.getElementById('edgeLen').value) || e.length;
+    e.name = document.getElementById('edgeName').value;
+    if (e.id >= nextEdgeId) nextEdgeId = e.id + 1;
+
+    // Sync reverse edge (same transport, opposite direction)
+    const revIdx = edges.findIndex(e2 => e2.id !== e.id && e2.from === e.to && e2.to === e.from && e2.transport === oldTransport);
+    if (revIdx >= 0) {
+      const rev = edges[revIdx];
+      rev.transport = e.transport;
+      rev.length = e.length;
+      rev.name = e.name;
+    }
+    render();
+  });
+});
+
+// Bidirectional toggle for existing edge
+document.getElementById('bidirCheck').addEventListener('change', () => {
+  if (selectedEdge === null) return;
+  saveState();
+  const e = edges[selectedEdge];
+  const hasReverse = edges.some(e2 => e2.from === e.to && e2.to === e.from && e2.transport === e.transport);
+
+  if (document.getElementById('bidirCheck').checked && !hasReverse) {
+    // Create reverse edge
+    edges.push({id: nextEdgeId++, from: e.to, to: e.from, transport: e.transport, length: e.length, name: e.name});
+    render();
+  } else if (!document.getElementById('bidirCheck').checked && hasReverse) {
+    // Remove reverse edge
+    const revIdx = edges.findIndex(e2 => e2.from === e.to && e2.to === e.from && e2.transport === e.transport);
+    if (revIdx >= 0) {
+      edges.splice(revIdx, 1);
+      if (selectedEdge >= revIdx) selectedEdge = Math.max(0, selectedEdge - 1);
+    }
+    render();
+  }
+});
+
+// Sidewalk toggle for existing edge
+document.getElementById('sidewalkEdgeCheck').addEventListener('change', () => {
+  if (selectedEdge === null) return;
+  saveState();
+  const e = edges[selectedEdge];
+  if (e.transport === 'walk') return;
+  const ref = `${e.from}-${e.to}`;
+  const hasSidewalk = edges.some(e2 => e2.sidewalkOf === ref);
+  const hasReverse = edges.some(e2 => e2.from === e.to && e2.to === e.from && e2.transport === e.transport);
+
+  if (document.getElementById('sidewalkEdgeCheck').checked && !hasSidewalk) {
+    addSidewalks(e.from, e.to, hasReverse, e.name);
+    render();
+  } else if (!document.getElementById('sidewalkEdgeCheck').checked && hasSidewalk) {
+    // Remove sidewalk edges and their nodes
+    const sidewalkNodeIds = new Set();
+    for (let k = edges.length - 1; k >= 0; k--) {
+      const ew = edges[k];
+      if (ew.sidewalkOf === ref) {
+        sidewalkNodeIds.add(ew.from);
+        sidewalkNodeIds.add(ew.to);
+        edges.splice(k, 1);
+        if (selectedEdge >= k) selectedEdge = Math.max(0, selectedEdge - 1);
+      }
+    }
+    // Remove orphaned sidewalk nodes (only if not used by other edges)
+    for (const nid of sidewalkNodeIds) {
+      const stillUsed = edges.some(e2 => e2.from === nid || e2.to === nid);
+      if (!stillUsed) {
+        const ni = nodes.findIndex(n => n.id === nid);
+        if (ni >= 0) {
+          nodes.splice(ni, 1);
+          if (selectedNode !== null && selectedNode >= ni) selectedNode = Math.max(0, selectedNode - 1);
+        }
+      }
+    }
+    render();
+  }
+});
+
+function deleteSelectedNode() {
+  if (selectedNode === null) return;
+  saveState();
+  const id = nodes[selectedNode].id;
+  nodes.splice(selectedNode, 1);
+  edges = edges.filter(e => e.from !== id && e.to !== id);
+  schedules = schedules.filter(s => !edges.find(e => e.id === s.edgeId));
+  selectedNode = null;
+  updateProps();
+  render();
+}
+
+function deleteSelectedEdge() {
+  if (selectedEdge === null) return;
+  saveState();
+  const id = edges[selectedEdge].id;
+  edges.splice(selectedEdge, 1);
+  schedules = schedules.filter(s => s.edgeId !== id);
+  selectedEdge = null;
+  updateProps();
+  render();
+}
+
+document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNode);
+document.getElementById('deleteEdgeBtn').addEventListener('click', deleteSelectedEdge);
+
+// ============================================================
+// TABS
+// ============================================================
+function activateTab(tabId) {
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.toggle('active', t.id === tabId));
+}
+document.querySelectorAll('#tabs button').forEach(b => {
+  b.addEventListener('click', () => activateTab(b.dataset.tab));
+});
+
+// ============================================================
+// SCHEDULES
+// ============================================================
+function updateScheduleList() {
+  const edgeId = parseInt(document.getElementById('schedEdgeId').value);
+  const list = document.getElementById('scheduleList');
+  const scheds = schedules.filter(s => s.edgeId === edgeId);
+  list.innerHTML = '';
+  scheds.forEach((s, idx) => {
+    const globalIdx = schedules.indexOf(s);
+    const div = document.createElement('div');
+    div.className = 'sched-item';
+    div.innerHTML = `
+      <select data-idx="${globalIdx}" data-field="type">
+        <option value="fixed_times" ${s.type==='fixed_times'?'selected':''}>Расписание (fixed_times)</option>
+        <option value="time_window" ${s.type==='time_window'?'selected':''}>Ограничение (time_window)</option>
+      </select>
+      <input data-idx="${globalIdx}" data-field="params" value="${s.params}" placeholder="08:00,08:15,... или 01:00-05:00" style="width:100%;margin-top:4px">
+      <button class="del-sched" data-idx="${globalIdx}">✕</button>
+    `;
+    list.appendChild(div);
+  });
+  // Bind events
+  list.querySelectorAll('select,input').forEach(el => {
+    el.addEventListener('change', () => {
+      const i = parseInt(el.dataset.idx);
+      const f = el.dataset.field;
+      schedules[i][f] = el.value;
+    });
+  });
+  list.querySelectorAll('.del-sched').forEach(el => {
+    el.addEventListener('click', () => {
+      saveState();
+      schedules.splice(parseInt(el.dataset.idx), 1);
+      updateScheduleList();
+    });
+  });
+}
+
+document.getElementById('addSchedBtn').addEventListener('click', () => {
+  const edgeId = parseInt(document.getElementById('schedEdgeId').value);
+  if (!edgeId) return;
+  saveState();
+  schedules.push({edgeId, type:'fixed_times', params:''});
+  updateScheduleList();
+});
+
+// ============================================================
+// TRANSPORT PARAMS
+// ============================================================
+function updateParamsTable() {
+  const body = document.getElementById('paramsBody');
+  body.innerHTML = '';
+  params.forEach((p, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input data-i="${i}" data-f="transport" value="${p.transport}"></td>
+      <td><input data-i="${i}" data-f="name" value="${p.name}"></td>
+      <td><input data-i="${i}" data-f="value" value="${p.value}"></td>
+      <td><button class="del-sched" data-i="${i}">✕</button></td>
+    `;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('input').forEach(el => {
+    el.addEventListener('change', () => {
+      params[parseInt(el.dataset.i)][el.dataset.f] = el.value;
+    });
+  });
+  body.querySelectorAll('.del-sched').forEach(el => {
+    el.addEventListener('click', () => {
+      saveState();
+      params.splice(parseInt(el.dataset.i), 1);
+      updateParamsTable();
+    });
+  });
+}
+
+document.getElementById('addParamBtn').addEventListener('click', () => {
+  saveState();
+  params.push({transport:'walk', name:'speed_kmh', value:'5.0'});
+  updateParamsTable();
+});
+
+// ============================================================
+// AUTO WALK TRANSITIONS
+// ============================================================
+document.getElementById('autoWalkBtn').addEventListener('click', () => {
+  saveState();
+  let created = 0;
+  const stopTypes = ['bus_stop','metro_station','poi'];
+
+  for (const n of nodes) {
+    if (!stopTypes.includes(n.type)) continue;
+
+    // Find nearest intersection
+    let bestDist = Infinity, bestIdx = -1;
+    for (let j = 0; j < nodes.length; j++) {
+      if (nodes[j].type !== 'intersection') continue;
+      const d = Math.hypot(nodes[j].x - n.x, nodes[j].y - n.y);
+      if (d < bestDist) { bestDist = d; bestIdx = j; }
+    }
+    if (bestIdx < 0 || bestDist < 1) continue;
+
+    const intId = nodes[bestIdx].id;
+    const len = Math.round(bestDist);
+
+    // Check if edge already exists
+    const exists1 = edges.some(e => e.from === n.id && e.to === intId && e.transport === 'walk');
+    const exists2 = edges.some(e => e.from === intId && e.to === n.id && e.transport === 'walk');
+
+    const isPoi = n.type === 'poi';
+    const isMetro = n.type === 'metro_station';
+    const nameTo = isPoi ? `Дорожка к ${n.name || 'месту'}` : isMetro ? 'Переход к метро' : 'Переход к перекрёстку';
+    const nameFrom = isPoi ? `Дорожка от ${n.name || 'места'}` : isMetro ? 'Переход к метро' : 'Переход к остановке';
+
+    if (!exists1) {
+      edges.push({id: nextEdgeId++, from: n.id, to: intId, transport:'walk', length: Math.max(len,1), name: nameTo});
+      created++;
+    }
+    if (!exists2) {
+      edges.push({id: nextEdgeId++, from: intId, to: n.id, transport:'walk', length: Math.max(len,1), name: nameFrom});
+      created++;
+    }
+  }
+  alert(`Создано ${created} пешеходных рёбер`);
+  render();
+});
+
+// ============================================================
+// AUTO RENAME INTERSECTIONS
+// ============================================================
+document.getElementById('autoRenameBtn').addEventListener('click', () => {
+  saveState();
+  let renamed = 0;
+  for (const n of nodes) {
+    if (n.type !== 'intersection') continue;
+    // Find all non-walk edges connected to this node with names
+    const connected = edges.filter(e => (e.from === n.id || e.to === n.id) && e.transport !== 'walk' && e.name && e.name.trim());
+    const roadNames = [...new Set(connected.map(e => e.name.trim()))];
+    if (roadNames.length >= 2) {
+      const newName = roadNames.join(' / ');
+      if (n.name !== newName) {
+        n.name = newName;
+        renamed++;
+      }
+    }
+  }
+  alert(`Переименовано перекрёстков: ${renamed}`);
+  updateProps();
+  render();
+});
+
+// Name walk edges after nearest POI nodes
+document.getElementById('walkNameBtn').addEventListener('click', () => {
+  saveState();
+  let named = 0;
+  const poiTypes = ['bus_stop', 'metro', 'poi'];
+  for (const e of edges) {
+    if (e.transport !== 'walk' || e.name) continue;
+    const n1 = nodes.find(n => n.id === e.from);
+    const n2 = nodes.find(n => n.id === e.to);
+    if (!n1 || !n2) continue;
+    // Find nearest POI node to the midpoint of the edge
+    const mx = (n1.x + n2.x) / 2, my = (n1.y + n2.y) / 2;
+    let bestPoi = null, bestDist = Infinity;
+    for (const n of nodes) {
+      if (!poiTypes.includes(n.type) || !n.name) continue;
+      const d = Math.hypot(n.x - mx, n.y - my);
+      if (d < bestDist) { bestDist = d; bestPoi = n; }
+    }
+    if (bestPoi && bestDist < 200) {
+      e.name = `к ${bestPoi.name}`;
+      named++;
+    }
+  }
+  alert(`Названо пешеходных дорог: ${named}`);
+  updateProps();
+  render();
+});
+
+// Merge nearby nodes into one
+document.getElementById('mergeNodesBtn').addEventListener('click', () => {
+  saveState();
+  const MERGE_DIST = 1; // world units
+  let merged = 0;
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (let i = 0; i < nodes.length && !changed; i++) {
+      for (let j = i + 1; j < nodes.length && !changed; j++) {
+        const a = nodes[i], b = nodes[j];
+        if (Math.hypot(a.x - b.x, a.y - b.y) < MERGE_DIST) {
+          // Merge j into i: redirect all edges from b.id to a.id
+          const removeId = b.id, keepId = a.id;
+          for (const e of edges) {
+            if (e.from === removeId) e.from = keepId;
+            if (e.to === removeId) e.to = keepId;
+          }
+          // Remove self-loop edges (from === to)
+          for (let k = edges.length - 1; k >= 0; k--) {
+            if (edges[k].from === edges[k].to) edges.splice(k, 1);
+          }
+          // Remove duplicate edges (same from, to, transport)
+          const seen = new Set();
+          for (let k = edges.length - 1; k >= 0; k--) {
+            const key = `${edges[k].from}-${edges[k].to}-${edges[k].transport}`;
+            if (seen.has(key)) edges.splice(k, 1);
+            else seen.add(key);
+          }
+          // Remove the merged node
+          nodes.splice(j, 1);
+          // Fix selectedNode index if needed
+          if (selectedNode === j) selectedNode = i;
+          else if (selectedNode !== null && selectedNode > j) selectedNode--;
+          merged++;
+          changed = true;
+        }
+      }
+    }
+  }
+  alert(`Слито вершин: ${merged}`);
+  selectedEdge = null;
+  updateProps();
+  render();
+});
+
+// ============================================================
+// SNAP SETTINGS
+// ============================================================
+document.getElementById('snapCheck').addEventListener('change', e => {
+  snapEnabled = e.target.checked;
+});
+
+document.getElementById('roadSnapCheck').addEventListener('change', e => {
+  roadSnapEnabled = e.target.checked;
+});
+
+document.getElementById('autoIntersectCheck').addEventListener('change', e => {
+  autoIntersectEnabled = e.target.checked;
+});
+
+document.getElementById('sidewalkCheck').addEventListener('change', e => {
+  sidewalkEnabled = e.target.checked;
+});
+
+// Add sidewalk (walk) edges alongside a car edge — offset 5m on each side
+function addSidewalks(fromId, toId, bidir, name) {
+  if (!sidewalkEnabled) return;
+  const n1 = nodes.find(n => n.id === fromId);
+  const n2 = nodes.find(n => n.id === toId);
+  if (!n1 || !n2) return;
+  const dx = n2.x - n1.x, dy = n2.y - n1.y;
+  const len = Math.hypot(dx, dy);
+  if (len === 0) return;
+  const ref = `${fromId}-${toId}`;
+  // Check if sidewalk already exists for this road
+  if (edges.some(e => e.sidewalkOf === ref)) return;
+  // Perpendicular unit vector
+  const nx = -dy / len, ny = dx / len;
+  const offset = 5; // meters
+  const walkName = name || 'Тротуар';
+  const walkLen = Math.max(1, Math.round(len));
+  // Left side nodes
+  const n1l = {id: nextNodeId++, type: 'intersection', name: '', x: Math.round(n1.x + nx * offset), y: Math.round(n1.y + ny * offset)};
+  const n2l = {id: nextNodeId++, type: 'intersection', name: '', x: Math.round(n2.x + nx * offset), y: Math.round(n2.y + ny * offset)};
+  // Right side nodes
+  const n1r = {id: nextNodeId++, type: 'intersection', name: '', x: Math.round(n1.x - nx * offset), y: Math.round(n1.y - ny * offset)};
+  const n2r = {id: nextNodeId++, type: 'intersection', name: '', x: Math.round(n2.x - nx * offset), y: Math.round(n2.y - ny * offset)};
+  nodes.push(n1l, n2l, n1r, n2r);
+  // Left sidewalk (bidirectional walk)
+  edges.push({id: nextEdgeId++, from: n1l.id, to: n2l.id, transport: 'walk', length: walkLen, name: walkName, sidewalkOf: ref});
+  edges.push({id: nextEdgeId++, from: n2l.id, to: n1l.id, transport: 'walk', length: walkLen, name: walkName, sidewalkOf: ref});
+  // Right sidewalk (bidirectional walk)
+  edges.push({id: nextEdgeId++, from: n1r.id, to: n2r.id, transport: 'walk', length: walkLen, name: walkName, sidewalkOf: ref});
+  edges.push({id: nextEdgeId++, from: n2r.id, to: n1r.id, transport: 'walk', length: walkLen, name: walkName, sidewalkOf: ref});
+}
+
+// ============================================================
+// FIT TO VIEW
+// ============================================================
+function fitToView() {
+  if (nodes.length === 0) {
+    pan = {x: 0, y: 0};
+    zoom = 1;
+    render();
+    return;
+  }
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const n of nodes) {
+    minX = Math.min(minX, n.x);
+    maxX = Math.max(maxX, n.x);
+    minY = Math.min(minY, n.y);
+    maxY = Math.max(maxY, n.y);
+  }
+  const margin = 0.1;
+  const worldW = (maxX - minX) || 1;
+  const worldH = (maxY - minY) || 1;
+  const zoomX = canvas.width / (worldW * (1 + 2 * margin));
+  const zoomY = canvas.height / (worldH * (1 + 2 * margin));
+  zoom = Math.min(zoomX, zoomY);
+  zoom = Math.max(0.05, Math.min(10, zoom));
+  pan.x = -((minX + maxX) / 2);
+  pan.y = (minY + maxY) / 2;
+  render();
+}
+document.getElementById('fitBtn').addEventListener('click', fitToView);
+
+// ============================================================
+// UNDO/REDO BUTTONS
+// ============================================================
+document.getElementById('undoBtn').addEventListener('click', undo);
+document.getElementById('redoBtn').addEventListener('click', redo);
+
+// ============================================================
+// CSV IMPORT
+// ============================================================
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', e => {
+  const files = e.target.files;
+  if (!files.length) return;
+  let pending = files.length;
+  const loaded = {};
+
+  for (const f of files) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const name = f.name.toLowerCase();
+      loaded[name] = ev.target.result;
+      if (--pending === 0) importCSV(loaded);
+    };
+    reader.readAsText(f);
+  }
+  e.target.value = '';
+});
+
+function parseCSV(text) {
+  const lines = text.split('\n');
+  const result = [];
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    // Simple CSV parse respecting quotes
+    const row = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    row.push(cur.trim());
+    result.push(row);
+  }
+  return result;
+}
+
+function importCSV(loaded) {
+  saveState();
+  nodes = []; edges = []; schedules = []; params = [];
+  nextNodeId = 1; nextEdgeId = 1;
+
+  // nodes.csv
+  if (loaded['nodes.csv']) {
+    const rows = parseCSV(loaded['nodes.csv']);
+    for (const r of rows) {
+      if (r[0] === 'node_id') continue; // header
+      if (r.length < 5) continue;
+      const id = parseInt(r[0]);
+      nodes.push({id, type:r[1], name:r[2].replace(/^"|"$/g,''), x:parseFloat(r[3]), y:parseFloat(r[4])});
+      if (id >= nextNodeId) nextNodeId = id + 1;
+    }
+  }
+
+  // edges.csv
+  if (loaded['edges.csv']) {
+    const rows = parseCSV(loaded['edges.csv']);
+    for (const r of rows) {
+      if (r[0] === 'edge_id') continue;
+      if (r.length < 6) continue;
+      const id = parseInt(r[0]);
+      edges.push({id, from:parseInt(r[1]), to:parseInt(r[2]), transport:r[3], length:parseFloat(r[4]), name:r[5].replace(/^"|"$/g,'')});
+      if (id >= nextEdgeId) nextEdgeId = id + 1;
+    }
+  }
+
+  // schedules.csv
+  if (loaded['schedules.csv']) {
+    const rows = parseCSV(loaded['schedules.csv']);
+    for (const r of rows) {
+      if (r[0] === 'edge_id') continue;
+      if (r.length < 3) continue;
+      schedules.push({edgeId:parseInt(r[0]), type:r[1], params:r[2].replace(/^"|"$/g,'')});
+    }
+  }
+
+  // transport_params.csv
+  if (loaded['transport_params.csv']) {
+    const rows = parseCSV(loaded['transport_params.csv']);
+    for (const r of rows) {
+      if (r[0] === 'transport_type') continue;
+      if (r.length < 3) continue;
+      params.push({transport:r[0], name:r[1], value:r[2]});
+    }
+  }
+
+  selectedNode = selectedEdge = null;
+  updateProps();
+  updateParamsTable();
+  render();
+  alert(`Импортировано: ${nodes.length} узлов, ${edges.length} рёбер, ${schedules.length} расписаний, ${params.length} параметров`);
+}
+
+// ============================================================
+// VALIDATION
+// ============================================================
+function validate() {
+  const errors = [];
+  const warnings = [];
+
+  // 1. Unique node IDs
+  const nodeIds = new Set();
+  for (const n of nodes) {
+    if (nodeIds.has(n.id)) errors.push(`Дубликат node_id: ${n.id}`);
+    nodeIds.add(n.id);
+  }
+
+  // 2. Unique edge IDs
+  const edgeIds = new Set();
+  for (const e of edges) {
+    if (edgeIds.has(e.id)) errors.push(`Дубликат edge_id: ${e.id}`);
+    edgeIds.add(e.id);
+  }
+
+  // 3. Referential integrity
+  for (const e of edges) {
+    if (!nodeIds.has(e.from)) errors.push(`Ребро ${e.id}: from_node ${e.from} не существует`);
+    if (!nodeIds.has(e.to)) errors.push(`Ребро ${e.id}: to_node ${e.to} не существует`);
+  }
+
+  // 4. Schedule references
+  for (const s of schedules) {
+    if (!edgeIds.has(s.edgeId)) errors.push(`Расписание: edge_id ${s.edgeId} не существует`);
+  }
+
+  // 5. Zero length
+  for (const e of edges) {
+    if (e.length <= 0) errors.push(`Ребро ${e.id}: длина <= 0`);
+  }
+
+  // 6. Isolated nodes
+  const connectedNodes = new Set();
+  for (const e of edges) { connectedNodes.add(e.from); connectedNodes.add(e.to); }
+  for (const n of nodes) {
+    if (!connectedNodes.has(n.id)) warnings.push(`Узел ${n.id} (${n.name||n.type}) изолирован — нет рёбер`);
+  }
+
+  // 7. Missing reverse edge
+  for (const e of edges) {
+    if (e.transport === 'walk') continue;
+    const hasReverse = edges.some(e2 => e2.from === e.to && e2.to === e.from && e2.transport === e.transport);
+    if (!hasReverse) warnings.push(`Ребро ${e.id} (${e.transport} ${e.from}→${e.to}): нет обратного ребра`);
+  }
+
+  // 8. Same coords
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i+1; j < nodes.length; j++) {
+      if (nodes[i].x === nodes[j].x && nodes[i].y === nodes[j].y) {
+        warnings.push(`Узлы ${nodes[i].id} и ${nodes[j].id} имеют одинаковые координаты`);
+      }
+    }
+  }
+
+  return {errors, warnings};
+}
+
+// ============================================================
+// CSV HELPERS
+// ============================================================
+function csvEscape(s) {
+  if (!s) return '""';
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+
+// ============================================================
+// CSV EXPORT
+// ============================================================
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const v = validate();
+  const list = document.getElementById('validList');
+  list.innerHTML = '';
+
+  if (v.errors.length === 0 && v.warnings.length === 0) {
+    doExport();
+    return;
+  }
+
+  v.errors.forEach(e => { const li = document.createElement('li'); li.className='err'; li.textContent='❌ '+e; list.appendChild(li); });
+  v.warnings.forEach(w => { const li = document.createElement('li'); li.className='warn'; li.textContent='⚠️ '+w; list.appendChild(li); });
+
+  if (v.errors.length > 0) {
+    document.getElementById('validExport').style.display = 'none';
+  } else {
+    document.getElementById('validExport').style.display = '';
+  }
+  document.getElementById('validModal').classList.add('show');
+});
+
+document.getElementById('validCancel').addEventListener('click', () => {
+  document.getElementById('validModal').classList.remove('show');
+});
+
+document.getElementById('validExport').addEventListener('click', () => {
+  document.getElementById('validModal').classList.remove('show');
+  doExport();
+});
+
+function doExport() {
+  // nodes.csv
+  let csv = '# nodes.csv — Создано в Map Editor\nnode_id,type,name,x,y\n';
+  for (const n of nodes) {
+    csv += `${n.id},${n.type},${csvEscape(n.name)},${n.x},${n.y}\n`;
+  }
+  download('nodes.csv', csv);
+
+  // edges.csv (exclude sidewalkOf — internal property)
+  setTimeout(() => {
+    csv = '# edges.csv — Создано в Map Editor\nedge_id,from_node,to_node,transport_type,length_meters,name\n';
+    for (const e of edges) {
+      csv += `${e.id},${e.from},${e.to},${e.transport},${e.length},${csvEscape(e.name)}\n`;
+    }
+    download('edges.csv', csv);
+  }, 300);
+
+  // schedules.csv
+  setTimeout(() => {
+    csv = '# schedules.csv — Создано в Map Editor\nedge_id,schedule_type,params\n';
+    for (const s of schedules) {
+      csv += `${s.edgeId},${s.type},${csvEscape(s.params)}\n`;
+    }
+    download('schedules.csv', csv);
+  }, 600);
+
+  // transport_params.csv
+  setTimeout(() => {
+    csv = '# transport_params.csv — Создано в Map Editor\ntransport_type,param_name,param_value\n';
+    for (const p of params) {
+      csv += `${p.transport},${p.name},${p.value}\n`;
+    }
+    download('transport_params.csv', csv);
+  }, 900);
+}
+
+function download(name, content) {
+  const blob = new Blob([content], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
+// CLEAR
+// ============================================================
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (!confirm('Очистить все данные?')) return;
+  saveState();
+  nodes = []; edges = []; schedules = []; params = [];
+  nextNodeId = 1; nextEdgeId = 1;
+  selectedNode = selectedEdge = null;
+  updateProps();
+  updateParamsTable();
+  render();
+});
+
+// ============================================================
+// BACKGROUND IMAGE
+// ============================================================
+document.getElementById('bgBtn').addEventListener('click', () => {
+  document.getElementById('bgFileInput').click();
+});
+document.getElementById('bgLoadBtn').addEventListener('click', () => {
+  document.getElementById('bgFileInput').click();
+});
+
+document.getElementById('bgFileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      bgImage = img;
+      document.getElementById('bgFileName').textContent = file.name;
+      activateTab('bgTab');
+      render();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+document.getElementById('bgVisibleCheck').addEventListener('change', e => {
+  bgVisible = e.target.checked;
+  render();
+});
+
+document.getElementById('bgOpacity').addEventListener('input', e => {
+  bgOpacityVal = parseInt(e.target.value) / 100;
+  document.getElementById('bgOpacityVal').textContent = e.target.value + '%';
+  render();
+});
+
+document.getElementById('bgScale').addEventListener('change', e => {
+  bgScaleVal = parseFloat(e.target.value) || 1;
+  render();
+});
+
+document.getElementById('bgOffX').addEventListener('change', e => {
+  bgOffX = parseFloat(e.target.value) || 0;
+  render();
+});
+
+document.getElementById('bgOffY').addEventListener('change', e => {
+  bgOffY = parseFloat(e.target.value) || 0;
+  render();
+});
+
+document.getElementById('bgRotation').addEventListener('change', e => {
+  bgRotation = parseFloat(e.target.value) || 0;
+  render();
+});
+
+document.getElementById('bgRemoveBtn').addEventListener('click', () => {
+  bgImage = null;
+  document.getElementById('bgFileName').textContent = 'Не загружен';
+  render();
+});
+
+// ============================================================
+// OSM TILE CONTROLS
+// ============================================================
+document.getElementById('osmBtn').addEventListener('click', () => {
+  osmEnabled = !osmEnabled;
+  document.getElementById('osmEnabledCheck').checked = osmEnabled;
+  document.getElementById('osmBtn').classList.toggle('active', osmEnabled);
+  if (osmEnabled) activateTab('bgTab');
+  render();
+});
+
+document.getElementById('osmEnabledCheck').addEventListener('change', e => {
+  osmEnabled = e.target.checked;
+  document.getElementById('osmBtn').classList.toggle('active', osmEnabled);
+  render();
+});
+
+document.getElementById('osmOpacity').addEventListener('input', e => {
+  osmOpacity = parseInt(e.target.value) / 100;
+  document.getElementById('osmOpacityVal').textContent = e.target.value + '%';
+  render();
+});
+
+document.getElementById('osmLat').addEventListener('change', e => {
+  osmCenterLat = parseFloat(e.target.value) || 55.93331;
+  render();
+});
+
+document.getElementById('osmLon').addEventListener('change', e => {
+  osmCenterLon = parseFloat(e.target.value) || 37.50526;
+  render();
+});
+
+document.getElementById('osmRadius').addEventListener('change', e => {
+  osmPreloadRadius = parseFloat(e.target.value) || 2000;
+  render();
+});
+
+document.getElementById('osmSpeed').addEventListener('change', e => {
+  osmLoadSpeed = parseInt(e.target.value) || 2;
+  // Restart timer with new speed
+  if (osmLoadTimer) { clearInterval(osmLoadTimer); osmLoadTimer = null; }
+  if (osmLoadQueue.length > 0) startLoadTimer();
+});
+
+// ============================================================
+// INIT
+// ============================================================
+// SAVE / LOAD to localStorage
+// ============================================================
+function saveToStorage() {
+  const data = JSON.stringify({nodes, edges, schedules, params, nextNodeId, nextEdgeId});
+  try {
+    localStorage.setItem('navigatorMapEditor', data);
+    document.getElementById('saveBtn').textContent = '✅ Сохранено';
+    setTimeout(() => { document.getElementById('saveBtn').textContent = '💾 Сохранить'; }, 1500);
+  } catch(err) {
+    alert('Ошибка сохранения: ' + err.message);
+  }
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem('navigatorMapEditor');
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    nodes = s.nodes || [];
+    edges = s.edges || [];
+    schedules = s.schedules || [];
+    params = s.params || [];
+    nextNodeId = s.nextNodeId || 1;
+    nextEdgeId = s.nextEdgeId || 1;
+    return true;
+  } catch(err) {
+    return false;
+  }
+}
+
+document.getElementById('saveBtn').addEventListener('click', saveToStorage);
+
+// ============================================================
+resize();
+
+// Try to load saved data first, otherwise use defaults
+if (!loadFromStorage()) {
+  // Default transport params
+  const defaultParams = [
+  {transport:'walk', name:'speed_kmh', value:'5.0'},
+  {transport:'walk', name:'fatigue_per_km', value:'10.0'},
+  {transport:'car', name:'speed_kmh', value:'40.0'},
+  {transport:'car', name:'fuel_consumption_l_per_100km', value:'8.0'},
+  {transport:'car', name:'fuel_price_rub_per_l', value:'7000.0'},
+  {transport:'bus', name:'speed_kmh', value:'25.0'},
+  {transport:'bus', name:'ticket_price', value:'55.0'},
+  {transport:'metro', name:'speed_kmh', value:'50.0'},
+  {transport:'metro', name:'ticket_price', value:'55.0'},
+  {transport:'metro', name:'morning_evening_interval_min', value:'2.0'},
+  {transport:'metro', name:'day_interval_min', value:'5.0'},
+  {transport:'taxi', name:'price_per_km', value:'20.0'},
+  {transport:'taxi', name:'base_price', value:'150.0'},
+  {transport:'taxi', name:'speed_kmh', value:'40.0'},
+];
+  params = defaultParams.slice();
+}
+updateParamsTable();
+updateProps();
+render();
+</script>
+</body>
+</html>
