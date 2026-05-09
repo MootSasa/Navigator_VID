@@ -1,0 +1,16 @@
+# transport_params.csv — Создано в Map Editor
+transport_type,param_name,param_value
+walk,speed_kmh,5.0
+walk,fatigue_per_km,10.0
+car,speed_kmh,40.0
+car,fuel_consumption_l_per_100km,8.0
+car,fuel_price_rub_per_l,7000.0
+bus,speed_kmh,25.0
+bus,ticket_price,55.0
+metro,speed_kmh,50.0
+metro,ticket_price,55.0
+metro,morning_evening_interval_min,2.0
+metro,day_interval_min,5.0
+taxi,price_per_km,20.0
+taxi,base_price,150.0
+taxi,speed_kmh,40.0
