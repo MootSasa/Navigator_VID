@@ -46,13 +46,18 @@ static void printRoute(const application::RouteResult& result, const domain::Gra
     std::cout << "  Рёбра: ";
     for (size_t i = 0; i < result.edges.size(); ++i) {
         const auto& edges = graph.getEdgesFrom(result.nodes[i]);
-        // Ищем ребро с нужным ID
+        // Ищем ребро с нужным ID для имени
+        std::string edge_name;
         for (const auto& e : edges) {
             if (e.id == result.edges[i]) {
-                std::cout << transportName(e.transport) << " [" << e.name << "]";
+                edge_name = e.name;
                 break;
             }
         }
+        // Фактический тип транспорта (Car->Taxi при наличии билета)
+        domain::TransportType actual = (i < result.actual_transports.size())
+            ? result.actual_transports[i] : domain::TransportType::Walk;
+        std::cout << transportName(actual) << " [" << edge_name << "]";
         if (i + 1 < result.edges.size()) std::cout << " -> ";
     }
     std::cout << "\n";
@@ -60,7 +65,6 @@ static void printRoute(const application::RouteResult& result, const domain::Gra
     const auto& cost = result.total_cost;
     std::cout << "  Время: " << formatDuration(cost.time_seconds) << "\n";
     std::cout << "  Стоимость: " << cost.money_rub << " руб.\n";
-    std::cout << "  Усталость: " << cost.fatigue << "\n";
     std::cout << "  Пересадки: " << cost.transfers << "\n";
 }
 
