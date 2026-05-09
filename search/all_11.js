@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['taxi_0',['Taxi',['../namespacedomain.html#aa5d214acadbd0e819ca85c41f05012d7a0dcfdb3caf2dcc0998f250e9aba65cee',1,'domain']]],
+  ['taxi_5fbase_5fprice_1',['taxi_base_price',['../structdomain_1_1TransportParams.html#a7fbdc3d8007025ee1c5db7011c25fa43',1,'domain::TransportParams']]],
+  ['taxi_5fprice_5fper_5fkm_2',['taxi_price_per_km',['../structdomain_1_1TransportParams.html#aeed25d4095545581d37b6b32b43e5034',1,'domain::TransportParams']]],
+  ['taxi_5fspeed_5fkmh_3',['taxi_speed_kmh',['../structdomain_1_1TransportParams.html#a84d13c6da808e92f79367d91d6c65851',1,'domain::TransportParams']]],
+  ['time_5fseconds_4',['time_seconds',['../structdomain_1_1CombinedCost.html#a785a635832c5314c8017bdc7e0b04a68',1,'domain::CombinedCost']]],
+  ['time_5fvariants_2ecpp_5',['time_variants.cpp',['../time__variants_8cpp.html',1,'']]],
+  ['time_5fvariants_2eh_6',['time_variants.h',['../time__variants_8h.html',1,'']]],
+  ['timewindowlogic_7',['timewindowlogic',['../classdomain_1_1TimeWindowLogic.html',1,'domain::TimeWindowLogic'],['../classdomain_1_1TimeWindowLogic.html#a5adce759ee12a0d0c8ed64ae220a4ca3',1,'domain::TimeWindowLogic::TimeWindowLogic()']]],
+  ['to_8',['to',['../structdomain_1_1Edge.html#adb0b7bb893c1024eb7a10faab3db5147',1,'domain::Edge']]],
+  ['to_5fnode_9',['to_node',['../structinfrastructure_1_1ParsedEdge.html#a616e86716b4b8c86b14c0a5929a6e645',1,'infrastructure::ParsedEdge']]],
+  ['total_5fcost_10',['total_cost',['../structapplication_1_1RouteResult.html#abc97b39cbb6b6308523e02ffe80d531c',1,'application::RouteResult']]],
+  ['transfers_11',['transfers',['../structdomain_1_1CombinedCost.html#a3ac4fc622215915f5f470f57504a5937',1,'domain::CombinedCost']]],
+  ['transport_12',['transport',['../a__star__solver_8cpp.html#a9bd132d2cc3928d318170315556bf1bd',1,'transport:&#160;a_star_solver.cpp'],['../structdomain_1_1Edge.html#ad4337182f8e99d24fbb1e45859a437b8',1,'domain::Edge::transport']]],
+  ['transport_5flegend_2ecpp_13',['transport_legend.cpp',['../transport__legend_8cpp.html',1,'']]],
+  ['transport_5flegend_2eh_14',['transport_legend.h',['../transport__legend_8h.html',1,'']]],
+  ['transport_5fparams_2eh_15',['transport_params.h',['../transport__params_8h.html',1,'']]],
+  ['transport_5ftype_16',['transport_type',['../structinfrastructure_1_1ParsedEdge.html#a894083331e241f05e3029603ec7bb92d',1,'infrastructure::ParsedEdge::transport_type'],['../structinfrastructure_1_1ParsedTransportParam.html#a59e340abc06324de80f8a674791ef6c2',1,'infrastructure::ParsedTransportParam::transport_type']]],
+  ['transportlegend_17',['transportlegend',['../classTransportLegend.html',1,'TransportLegend'],['../classTransportLegend.html#aa436fa26b7566c6f749fb6301da7c407',1,'TransportLegend::TransportLegend()']]],
+  ['transportname_18',['transportName',['../main_8cpp.html#a3d920ff516a9f504666a55d48b5677fe',1,'main.cpp']]],
+  ['transportparams_19',['TransportParams',['../structdomain_1_1TransportParams.html',1,'domain']]],
+  ['transporttype_20',['transporttype',['../classEdgeItem.html#a687e1748b77b68d1927c8ace3956a819',1,'EdgeItem::transportType()'],['../namespacedomain.html#aa5d214acadbd0e819ca85c41f05012d7',1,'domain::TransportType']]],
+  ['type_21',['type',['../structdomain_1_1Node.html#a1d5f6bf1b99b2915aa10c5f5cbae7dc5',1,'domain::Node::type'],['../structinfrastructure_1_1ParsedNode.html#aec1ffcf7b2bc12589a18cefa9012eef1',1,'infrastructure::ParsedNode::type']]],
+  ['types_2eh_22',['types.h',['../types_8h.html',1,'']]]
+];

@@ -1,0 +1,18 @@
+<map id="include/application/strategies.h" name="include/application/strategies.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="173,5,319,45"/>
+<area shape="rect" id="Node000002" href="$i__route__strategy_8h.html" title=" " alt="" coords="177,93,315,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="249,46,249,79,243,79,243,46"/>
+<area shape="rect" id="Node000003" href="$combined__cost_8h.html" title=" " alt="" coords="5,167,156,207"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="223,121,134,163,132,158,221,116"/>
+<area shape="rect" id="Node000004" href="$node_8h.html" title=" " alt="" coords="181,174,311,199"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="249,119,249,160,243,160,243,119"/>
+<area shape="rect" id="Node000007" href="$transport__params_8h.html" title=" " alt="" coords="335,167,482,207"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="271,116,358,158,356,163,269,121"/>
+<area shape="rect" id="Node000005" href="$types_8h.html" title=" " alt="" coords="285,255,356,280"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="259,198,302,243,298,247,255,201"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="202,255,261,280"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="246,200,239,242,233,241,241,199"/>
+<area shape="poly" id="edge7_Node000007_Node000005" title=" " alt="" coords="389,209,346,247,342,243,386,205"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="381,255,466,280"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="415,206,421,241,416,242,410,207"/>
+</map>

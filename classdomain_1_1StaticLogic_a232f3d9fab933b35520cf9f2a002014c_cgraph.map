@@ -1,0 +1,7 @@
+<map id="domain::StaticLogic::calculate" name="domain::StaticLogic::calculate">
+<area shape="rect" id="Node000001" title="Рассчитывает время прибытия и стоимость прохождения ребра. Если ребро недоступно в данный момент,..." alt="" coords="5,37,156,77"/>
+<area shape="rect" id="Node000002" href="$classapplication_1_1IRouteStrategy.html#a608ce05d0e31558076f25a4d7c34edf6" title="Создает объект стоимости для конкретного ребра и контекста." alt="" coords="204,5,403,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,44,190,39,191,44,157,49"/>
+<area shape="rect" id="Node000003" href="$structdomain_1_1TransportParams.html#ad5e920a5bef9c7db72e72a1fb04eff1d" title="Возвращает скорость транспорта в м/с." alt="" coords="210,69,397,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="157,66,197,71,196,77,156,71"/>
+</map>

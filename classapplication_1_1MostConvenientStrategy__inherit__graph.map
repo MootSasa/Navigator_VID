@@ -1,0 +1,5 @@
+<map id="application::MostConvenientStrategy" name="application::MostConvenientStrategy">
+<area shape="rect" id="Node000001" title="Стратегия &quot;Самый удобный&quot; &#45; минимизация пересадок." alt="" coords="5,79,213,119"/>
+<area shape="rect" id="Node000002" href="$classapplication_1_1IRouteStrategy.html" title="Интерфейс стратегии поиска маршрута." alt="" coords="10,5,209,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,44,112,79,107,79,107,44"/>
+</map>

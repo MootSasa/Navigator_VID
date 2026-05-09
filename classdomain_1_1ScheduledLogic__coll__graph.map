@@ -1,0 +1,5 @@
+<map id="domain::ScheduledLogic" name="domain::ScheduledLogic">
+<area shape="rect" id="Node000001" title="Логика автобусов &#45; ходит по точному расписанию." alt="" coords="5,79,185,104"/>
+<area shape="rect" id="Node000002" href="$classdomain_1_1ITimeVariant.html" title="Интерфейс для рёбер с поведением, зависящим от времени." alt="" coords="14,5,177,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,44,98,79,93,79,93,44"/>
+</map>

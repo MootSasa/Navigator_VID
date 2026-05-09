@@ -1,0 +1,18 @@
+<map id="include/application/strategies.h" name="include/application/strategies.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="328,5,473,45"/>
+<area shape="rect" id="Node000002" href="$navigation__facade_8h.html" title=" " alt="" coords="216,93,375,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="369,56,320,95,317,91,365,52"/>
+<area shape="rect" id="Node000008" href="$strategies_8cpp.html" title=" " alt="" coords="399,101,613,126"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="436,52,493,98,490,102,433,56"/>
+<area shape="rect" id="Node000003" href="$navigation__facade_8cpp.html" title=" " alt="" coords="5,181,196,221"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="241,141,144,184,142,179,239,136"/>
+<area shape="rect" id="Node000004" href="$gui__main_8cpp.html" title=" " alt="" coords="156,269,312,295"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="279,147,262,182,247,230,239,269,233,268,242,229,257,180,274,144"/>
+<area shape="rect" id="Node000005" href="$main__window_8h.html" title=" " alt="" coords="271,189,442,214"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="319,143,350,187,346,190,315,146"/>
+<area shape="rect" id="Node000007" href="$main_8cpp.html" title=" " alt="" coords="467,189,572,214"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="358,136,490,186,489,191,356,141"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="329,224,254,271,251,267,326,219"/>
+<area shape="rect" id="Node000006" href="$main__window_8cpp.html" title=" " alt="" coords="336,269,521,295"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="379,222,420,267,416,271,375,226"/>
+</map>

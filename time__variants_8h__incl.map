@@ -1,0 +1,19 @@
+<map id="include/domain/time_variants.h" name="include/domain/time_variants.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="284,5,440,45"/>
+<area shape="rect" id="Node000002" href="$i__time__variant_8h.html" title=" " alt="" coords="238,93,366,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="350,47,321,84,317,81,345,44"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="391,93,453,119"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="379,44,407,81,403,84,374,47"/>
+<area shape="rect" id="Node000003" href="$combined__cost_8h.html" title=" " alt="" coords="5,167,137,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="266,121,122,165,121,160,264,116"/>
+<area shape="rect" id="Node000004" href="$transport__params_8h.html" title=" " alt="" coords="162,167,311,192"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="293,121,258,158,255,155,289,117"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="335,167,402,192"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="315,117,350,155,347,158,311,121"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="426,167,501,192"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="329,116,426,159,423,163,327,121"/>
+<area shape="rect" id="Node000005" href="$types_8h.html" title=" " alt="" coords="149,240,220,265"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="230,194,203,230,199,227,226,191"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="245,240,330,265"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="247,191,273,227,269,230,243,194"/>
+</map>

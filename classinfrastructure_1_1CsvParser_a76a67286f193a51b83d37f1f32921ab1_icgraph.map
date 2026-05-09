@@ -1,0 +1,7 @@
+<map id="infrastructure::CsvParser::parseEdges" name="infrastructure::CsvParser::parseEdges">
+<area shape="rect" id="Node000001" title="Парсит файл edges.csv. Формат: edge_id,from_node,to_node,transport_type,length_meters,..." alt="" coords="359,5,541,45"/>
+<area shape="rect" id="Node000002" href="$classinfrastructure_1_1GraphBuilder.html#a08a700d345a423573bbd2e16ef02c145" title="Загружает рёбра из CSV файла." alt="" coords="108,5,311,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="345,28,311,28,311,23,345,23"/>
+<area shape="rect" id="Node000003" href="$gui__main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,13,60,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="94,28,60,28,60,23,94,23"/>
+</map>

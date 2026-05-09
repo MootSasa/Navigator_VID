@@ -1,0 +1,7 @@
+<map id="MapScene::highlightRoute" name="MapScene::highlightRoute">
+<area shape="rect" id="Node000001" title="Подсвечивает маршрут на карте." alt="" coords="5,5,197,31"/>
+<area shape="rect" id="Node000002" href="$classRouteItem.html#a8075879d11fd7023115174b9d387ab78" title="Устанавливает маршрут для отображения." alt="" coords="245,5,401,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,15,232,15,232,21,198,21"/>
+<area shape="rect" id="Node000003" href="$classdomain_1_1Graph.html#a17dc3667b7246c30e87ac24a5eb1c0ed" title="Возвращает узел по ID." alt="" coords="449,5,631,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="402,15,435,15,435,21,402,21"/>
+</map>

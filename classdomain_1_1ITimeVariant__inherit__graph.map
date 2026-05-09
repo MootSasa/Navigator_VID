@@ -1,0 +1,11 @@
+<map id="domain::ITimeVariant" name="domain::ITimeVariant">
+<area shape="rect" id="Node000001" title="Интерфейс для рёбер с поведением, зависящим от времени." alt="" coords="5,80,168,105"/>
+<area shape="rect" id="Node000002" href="$classdomain_1_1FrequencyBasedLogic.html" title="Логика метро &#45; интервал зависит от времени суток." alt="" coords="216,5,436,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="128,72,215,39,258,28,259,33,217,45,130,77"/>
+<area shape="rect" id="Node000003" href="$classdomain_1_1ScheduledLogic.html" title="Логика автобусов &#45; ходит по точному расписанию." alt="" coords="236,55,416,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="181,80,235,74,236,80,182,85"/>
+<area shape="rect" id="Node000004" href="$classdomain_1_1StaticLogic.html" title="Статическая логика &#45; для пеших и автомобильных дорог." alt="" coords="251,104,401,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="182,99,251,107,250,112,181,105"/>
+<area shape="rect" id="Node000005" href="$classdomain_1_1TimeWindowLogic.html" title="Логика разводных мостов &#45; ребро недоступно в ночное время." alt="" coords="227,153,425,179"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="132,108,217,138,265,151,263,156,215,143,130,113"/>
+</map>

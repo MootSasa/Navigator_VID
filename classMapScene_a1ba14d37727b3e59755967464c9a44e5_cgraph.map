@@ -1,0 +1,13 @@
+<map id="MapScene::loadGraph" name="MapScene::loadGraph">
+<area shape="rect" id="Node000001" title="Загружает граф в сцену, создавая графические элементы." alt="" coords="5,104,169,129"/>
+<area shape="rect" id="Node000002" href="$classdomain_1_1Graph.html#aa0ae82fc986c4107e2c644ebd3bea36f" title="Возвращает все рёбра графа (для UI/Facade)." alt="" coords="219,5,421,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,102,154,71,216,40,238,32,240,37,218,44,157,75,108,106"/>
+<area shape="rect" id="Node000003" href="$classdomain_1_1Graph.html#aec54387f3d2d12f55b25647673f0ee67" title="Возвращает все узлы графа (для UI/Facade)." alt="" coords="217,55,423,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="147,101,245,80,247,86,148,107"/>
+<area shape="rect" id="Node000004" href="$classdomain_1_1Graph.html#a17dc3667b7246c30e87ac24a5eb1c0ed" title="Возвращает узел по ID." alt="" coords="229,104,411,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="170,114,216,114,216,119,170,119"/>
+<area shape="rect" id="Node000005" href="$classdomain_1_1Graph.html#a478eec2866c6565cd0507704d496607c" title="Проверяет существование узла." alt="" coords="229,153,411,179"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="148,127,247,148,245,153,147,132"/>
+<area shape="rect" id="Node000006" href="$classNodeItem.html#aaac3c2ad967af1ce3b29bbace27060b1" title="Сигнал клика по узлу." alt="" coords="233,203,407,228"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="109,127,157,157,218,188,244,196,242,201,216,192,155,162,106,132"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="domain::EdgeResult" name="domain::EdgeResult">
+<area shape="rect" id="Node000001" title="Результат расчёта ребра." alt="" coords="17,93,169,119"/>
+<area shape="rect" id="Node000002" href="$structdomain_1_1CombinedCost.html" title="Комбинированная стоимость маршрута." alt="" coords="5,5,180,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,45,95,93,90,93,90,45"/>
+</map>

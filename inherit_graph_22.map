@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,31,84,56"/>
+<area shape="rect" id="Node000001" href="$classRoutePanel.html" title="Боковая панель маршрутов." alt="" coords="149,5,244,31"/>
+<area shape="poly" id="edge14_Node000000_Node000001" title=" " alt="" coords="97,32,148,23,149,29,98,37"/>
+<area shape="rect" id="Node000002" href="$classTransportLegend.html" title="Легенда условных обозначений для карты." alt="" coords="132,55,261,80"/>
+<area shape="poly" id="edge15_Node000000_Node000002" title=" " alt="" coords="98,49,132,54,131,60,97,54"/>
+</map>

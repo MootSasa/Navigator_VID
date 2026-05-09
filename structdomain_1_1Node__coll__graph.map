@@ -1,0 +1,5 @@
+<map id="domain::Node" name="domain::Node">
+<area shape="rect" id="Node000001" title="Узел графа (перекрёсток, остановка, станция метро, точка интереса)." alt="" coords="5,93,119,119"/>
+<area shape="rect" id="Node000002" href="$structdomain_1_1Point.html" title="Двумерная точка (координаты узла в метрах от условного центра)." alt="" coords="6,5,118,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="65,45,65,93,59,93,59,45"/>
+</map>

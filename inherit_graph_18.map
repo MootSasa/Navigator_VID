@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,55,136,80"/>
+<area shape="rect" id="Node000001" href="$classEdgeItem.html" title="Графический элемент ребра на карте." alt="" coords="187,5,271,31"/>
+<area shape="poly" id="edge8_Node000000_Node000001" title=" " alt="" coords="124,48,187,28,188,33,126,53"/>
+<area shape="rect" id="Node000002" href="$classNodeItem.html" title="Графический элемент узла на карте." alt="" coords="186,55,273,80"/>
+<area shape="poly" id="edge9_Node000000_Node000002" title=" " alt="" coords="150,65,186,65,186,70,150,70"/>
+<area shape="rect" id="Node000003" href="$classRouteItem.html" title="Графический элемент маршрута поверх графа." alt="" coords="184,104,275,129"/>
+<area shape="poly" id="edge10_Node000000_Node000003" title=" " alt="" coords="126,82,188,101,187,106,124,87"/>
+</map>

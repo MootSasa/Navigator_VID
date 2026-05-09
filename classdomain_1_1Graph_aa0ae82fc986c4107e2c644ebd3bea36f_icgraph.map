@@ -1,0 +1,7 @@
+<map id="domain::Graph::getAllEdges" name="domain::Graph::getAllEdges">
+<area shape="rect" id="Node000001" title="Возвращает все рёбра графа (для UI/Facade)." alt="" coords="463,5,665,31"/>
+<area shape="rect" id="Node000002" href="$classMapScene.html#a1ba14d37727b3e59755967464c9a44e5" title="Загружает граф в сцену, создавая графические элементы." alt="" coords="251,5,415,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="449,21,415,21,415,15,449,15"/>
+<area shape="rect" id="Node000003" href="$classMainWindow.html#a4f357ab64ee2507b7e66b10258ad0714" title="Конструктор с готовым фасадом навигации." alt="" coords="5,5,203,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="237,21,203,21,203,15,237,15"/>
+</map>

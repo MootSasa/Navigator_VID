@@ -1,0 +1,11 @@
+<map id="application::IRouteStrategy::less" name="application::IRouteStrategy::less">
+<area shape="rect" id="Node000001" title="Сравнивает две стоимости (a &lt; b по критерию стратегии)." alt="" coords="587,37,785,77"/>
+<area shape="rect" id="Node000002" href="$namespaceapplication.html#aac6f2a30b5642422e7440b793eb3d211" title="Ищет маршрут между двумя узлами с помощью алгоритма A*." alt="" coords="375,45,539,70"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="573,60,539,60,539,55,573,55"/>
+<area shape="rect" id="Node000003" href="$classapplication_1_1NavigationFacade.html#a07c6ac701bde1d2f86028b1b59deae5c" title="Найти маршруты всеми стратегиями." alt="" coords="108,5,327,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="361,47,326,43,327,37,361,42"/>
+<area shape="rect" id="Node000004" href="$classapplication_1_1NavigationFacade.html#a85ff8bf944e4b3b05f759dcd61551498" title="Найти маршрут между двумя узлами." alt="" coords="108,69,327,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="361,73,327,77,326,72,361,67"/>
+<area shape="rect" id="Node000005" href="$main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,77,60,102"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="94,92,60,92,60,87,94,87"/>
+</map>

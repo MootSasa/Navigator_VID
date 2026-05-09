@@ -1,0 +1,5 @@
+<map id="RoutePanel::populateNodes" name="RoutePanel::populateNodes">
+<area shape="rect" id="Node000001" title="Заполняет комбобоксы узлами из графа." alt="" coords="251,5,452,31"/>
+<area shape="rect" id="Node000002" href="$classMainWindow.html#a4f357ab64ee2507b7e66b10258ad0714" title="Конструктор с готовым фасадом навигации." alt="" coords="5,5,203,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="237,21,203,21,203,15,237,15"/>
+</map>

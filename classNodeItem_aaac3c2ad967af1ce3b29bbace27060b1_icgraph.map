@@ -1,0 +1,9 @@
+<map id="NodeItem::nodeClicked" name="NodeItem::nodeClicked">
+<area shape="rect" id="Node000001" title="Сигнал клика по узлу." alt="" coords="509,31,683,56"/>
+<area shape="rect" id="Node000002" href="$classMapScene.html#a1ba14d37727b3e59755967464c9a44e5" title="Загружает граф в сцену, создавая графические элементы." alt="" coords="274,5,438,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="495,35,438,29,439,24,496,30"/>
+<area shape="rect" id="Node000004" href="$classNodeItem.html#a2f02cfa902284d75ea7181f92e74d421" title=" " alt="" coords="251,55,461,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="496,56,462,59,461,54,496,51"/>
+<area shape="rect" id="Node000003" href="$classMainWindow.html#a4f357ab64ee2507b7e66b10258ad0714" title="Конструктор с готовым фасадом навигации." alt="" coords="5,5,203,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="260,21,203,21,203,15,260,15"/>
+</map>

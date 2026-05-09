@@ -1,0 +1,9 @@
+<map id="application::IRouteStrategy" name="application::IRouteStrategy">
+<area shape="rect" id="Node000001" title="Интерфейс стратегии поиска маршрута." alt="" coords="5,55,204,80"/>
+<area shape="rect" id="Node000002" href="$classapplication_1_1CheapestStrategy.html" title="Стратегия &quot;Самый дешёвый&quot; &#45; минимизация денег и усталости." alt="" coords="252,5,471,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,49,294,28,295,33,185,55"/>
+<area shape="rect" id="Node000003" href="$classapplication_1_1FastestStrategy.html" title="Стратегия &quot;Самый быстрый&quot; &#45; минимизация времени в пути." alt="" coords="260,55,463,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="218,65,260,65,260,70,218,70"/>
+<area shape="rect" id="Node000004" href="$classapplication_1_1MostConvenientStrategy.html" title="Стратегия &quot;Самый удобный&quot; &#45; минимизация пересадок." alt="" coords="257,105,465,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="176,80,272,102,271,107,175,86"/>
+</map>

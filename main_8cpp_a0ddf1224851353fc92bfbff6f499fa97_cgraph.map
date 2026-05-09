@@ -1,0 +1,51 @@
+<map id="main" name="main">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,319,60,345"/>
+<area shape="rect" id="Node000002" href="$classinfrastructure_1_1GraphBuilder.html#a99351910b3de06d0c5641b070b9a63be" title="Собирает и возвращает готовый граф." alt="" coords="116,5,319,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="31,319,31,270,40,200,49,161,62,123,81,87,106,56,110,52,114,56,110,59,86,90,67,125,54,163,45,201,37,271,36,319"/>
+<area shape="rect" id="Node000003" href="$classinfrastructure_1_1GraphBuilder.html#a6ab9690f46acda9655ed9ae92c008ca8" title="Собирает объект TransportParams из загруженных параметров." alt="" coords="116,69,319,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="32,319,37,281,49,230,71,175,87,149,106,126,121,114,124,118,110,130,91,152,76,177,54,232,43,282,38,319"/>
+<area shape="rect" id="Node000004" href="$classapplication_1_1NavigationFacade.html#a85ff8bf944e4b3b05f759dcd61551498" title="Найти маршрут между двумя узлами." alt="" coords="108,184,327,224"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="38,317,64,276,84,253,106,234,116,228,119,232,110,238,87,257,69,279,43,320"/>
+<area shape="rect" id="Node000011" href="$classapplication_1_1NavigationFacade.html#a8eeaeb3a80c3d909d42a369be6787bcc" title="Получить граф для отображения." alt="" coords="108,248,327,288"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="59,317,107,298,130,290,131,295,109,302,61,322"/>
+<area shape="rect" id="Node000012" href="$classapplication_1_1NavigationFacade.html#a0f7557c70b119bf31f2f0828737dcb68" title="Проверить, существует ли узел." alt="" coords="108,312,327,352"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="60,329,94,329,94,335,60,335"/>
+<area shape="rect" id="Node000013" href="$classinfrastructure_1_1GraphBuilder.html#a08a700d345a423573bbd2e16ef02c145" title="Загружает рёбра из CSV файла." alt="" coords="116,376,319,416"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="61,342,109,362,131,369,130,374,107,366,59,347"/>
+<area shape="rect" id="Node000015" href="$classinfrastructure_1_1GraphBuilder.html#a039d88391b05cbbf279938a567250475" title="Загружает узлы из CSV файла." alt="" coords="116,440,319,480"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="43,344,69,385,87,407,110,426,119,432,116,436,106,430,84,411,64,388,38,347"/>
+<area shape="rect" id="Node000017" href="$classinfrastructure_1_1GraphBuilder.html#a87f3ffb8c77eef6e9b3383309c6d4dae" title="Загружает расписания из CSV файла." alt="" coords="116,504,319,544"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="39,344,46,374,59,414,80,455,110,490,116,495,113,499,106,494,76,458,54,416,41,376,34,346"/>
+<area shape="rect" id="Node000019" href="$classinfrastructure_1_1GraphBuilder.html#a3e640cfcf23b279b330d7df36fd7d1c4" title="Загружает параметры транспорта из CSV файла." alt="" coords="116,568,319,608"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="37,345,40,385,51,441,73,502,89,530,110,554,114,558,111,562,106,558,85,533,68,504,46,443,35,386,32,345"/>
+<area shape="rect" id="Node000021" href="$classdomain_1_1Graph.html#affc33ac67ab16cdf3cedb2505fa77b50" title="Возвращает количество узлов в графе." alt="" coords="119,633,315,658"/>
+<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="38,344,46,403,61,486,83,566,96,598,110,618,116,623,112,627,106,622,91,600,78,568,56,487,41,404,33,345"/>
+<area shape="rect" id="Node000022" href="$main_8cpp.html#acf3167c65c5c98221403e5c226c7c490" title=" " alt="" coords="421,123,511,149"/>
+<area shape="poly" id="edge21_Node000001_Node000022" title=" " alt="" coords="33,318,39,287,52,246,74,204,89,186,107,170,130,158,161,150,241,138,329,133,406,132,407,138,329,139,242,144,162,155,132,163,109,174,92,189,78,207,57,248,44,288,38,319"/>
+<area shape="rect" id="Node000005" href="$namespaceapplication.html#aac6f2a30b5642422e7440b793eb3d211" title="Ищет маршрут между двумя узлами с помощью алгоритма A*." alt="" coords="384,211,548,237"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="327,210,371,214,370,219,327,215"/>
+<area shape="rect" id="Node000006" href="$classdomain_1_1Graph.html#a9010d53766badd06cc7d2a36bcca8c4a" title="Возвращает все рёбра исходящие из узла." alt="" coords="605,173,824,198"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="548,209,618,198,619,203,549,214"/>
+<area shape="rect" id="Node000007" href="$classdomain_1_1Graph.html#a17dc3667b7246c30e87ac24a5eb1c0ed" title="Возвращает узел по ID." alt="" coords="624,123,805,149"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="489,209,541,183,604,157,631,150,633,155,606,163,544,188,492,214"/>
+<area shape="rect" id="Node000008" href="$classdomain_1_1Graph.html#a478eec2866c6565cd0507704d496607c" title="Проверяет существование узла." alt="" coords="623,222,806,247"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="548,225,610,228,610,233,548,230"/>
+<area shape="rect" id="Node000009" href="$classapplication_1_1IRouteStrategy.html#a42e689c6e35178624cf2377ca53450e5" title="Эвристическая функция для A*." alt="" coords="615,272,814,312"/>
+<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="514,234,628,266,627,271,513,239"/>
+<area shape="rect" id="Node000010" href="$classapplication_1_1IRouteStrategy.html#a33d7b6b5d5a1107e2585569e1ef41232" title="Сравнивает две стоимости (a &lt; b по критерию стратегии)." alt="" coords="615,336,814,376"/>
+<area shape="poly" id="edge9_Node000005_Node000010" title=" " alt="" coords="483,235,536,277,570,301,607,322,623,329,621,334,604,326,567,305,532,281,480,239"/>
+<area shape="rect" id="Node000014" href="$classinfrastructure_1_1CsvParser.html#a76a67286f193a51b83d37f1f32921ab1" title="Парсит файл edges.csv. Формат: edge_id,from_node,to_node,transport_type,length_meters,..." alt="" coords="375,376,557,416"/>
+<area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="319,393,361,393,361,399,319,399"/>
+<area shape="rect" id="Node000016" href="$classinfrastructure_1_1CsvParser.html#a5d73544c0b500ca2ddb2ff148e8edd7c" title="Парсит файл nodes.csv. Формат: node_id,type,name,x,y." alt="" coords="375,440,557,480"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="319,457,361,457,361,463,319,463"/>
+<area shape="rect" id="Node000018" href="$classinfrastructure_1_1CsvParser.html#ac408add31400244f3976dec36cfae330" title="Парсит файл schedules.csv. Формат: edge_id,schedule_type,params." alt="" coords="375,504,557,544"/>
+<area shape="poly" id="edge17_Node000017_Node000018" title=" " alt="" coords="319,521,361,521,361,527,319,527"/>
+<area shape="rect" id="Node000020" href="$classinfrastructure_1_1CsvParser.html#a5576cb8158db75708fd4e0c15e1ff407" title="Парсит файл transport_params.csv. Формат: transport_type,param_name,param_value." alt="" coords="375,568,557,608"/>
+<area shape="poly" id="edge19_Node000019_Node000020" title=" " alt="" coords="319,585,361,585,361,591,319,591"/>
+<area shape="poly" id="edge23_Node000022_Node000006" title=" " alt="" coords="512,142,637,167,636,173,511,148"/>
+<area shape="poly" id="edge24_Node000022_Node000007" title=" " alt="" coords="512,133,610,133,610,139,512,139"/>
+<area shape="rect" id="Node000023" href="$main_8cpp.html#ac08bb43a6f01703516f41cc419bf38d4" title=" " alt="" coords="653,74,776,99"/>
+<area shape="poly" id="edge22_Node000022_Node000023" title=" " alt="" coords="511,124,639,99,640,104,512,130"/>
+<area shape="rect" id="Node000024" href="$main_8cpp.html#a3d920ff516a9f504666a55d48b5677fe" title=" " alt="" coords="655,25,775,50"/>
+<area shape="poly" id="edge25_Node000022_Node000024" title=" " alt="" coords="485,121,538,90,604,59,640,48,642,53,606,64,540,95,488,126"/>
+</map>

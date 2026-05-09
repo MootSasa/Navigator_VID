@@ -1,0 +1,5 @@
+<map id="domain::StaticLogic" name="domain::StaticLogic">
+<area shape="rect" id="Node000001" title="Статическая логика &#45; для пеших и автомобильных дорог." alt="" coords="11,79,162,104"/>
+<area shape="rect" id="Node000002" href="$classdomain_1_1ITimeVariant.html" title="Интерфейс для рёбер с поведением, зависящим от времени." alt="" coords="5,5,168,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="89,44,89,79,84,79,84,44"/>
+</map>

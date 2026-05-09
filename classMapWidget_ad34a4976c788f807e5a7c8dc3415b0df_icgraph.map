@@ -1,0 +1,5 @@
+<map id="MapWidget::fitToView" name="MapWidget::fitToView">
+<area shape="rect" id="Node000001" title="Подгоняет содержимое под размер виджета (центрирование + fit&#45;to&#45;view)." alt="" coords="233,5,396,31"/>
+<area shape="rect" id="Node000002" href="$classMapWidget.html#ab592d95fedf75d119f24d735cee48731" title=" " alt="" coords="5,5,185,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,21,186,21,186,15,220,15"/>
+</map>

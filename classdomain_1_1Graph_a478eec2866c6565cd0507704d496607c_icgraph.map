@@ -1,0 +1,15 @@
+<map id="domain::Graph::hasNode" name="domain::Graph::hasNode">
+<area shape="rect" id="Node000001" title="Проверяет существование узла." alt="" coords="587,106,769,131"/>
+<area shape="rect" id="Node000002" href="$namespaceapplication.html#aac6f2a30b5642422e7440b793eb3d211" title="Ищет маршрут между двумя узлами с помощью алгоритма A*." alt="" coords="375,77,539,102"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="573,107,539,103,539,98,573,102"/>
+<area shape="rect" id="Node000006" href="$classMapScene.html#a1ba14d37727b3e59755967464c9a44e5" title="Загружает граф в сцену, создавая графические элементы." alt="" coords="375,130,539,155"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="573,133,539,136,539,131,573,127"/>
+<area shape="rect" id="Node000003" href="$classapplication_1_1NavigationFacade.html#a07c6ac701bde1d2f86028b1b59deae5c" title="Найти маршруты всеми стратегиями." alt="" coords="108,5,327,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="394,76,292,48,294,43,395,70"/>
+<area shape="rect" id="Node000004" href="$classapplication_1_1NavigationFacade.html#a85ff8bf944e4b3b05f759dcd61551498" title="Найти маршрут между двумя узлами." alt="" coords="108,69,327,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="361,92,327,92,327,87,361,87"/>
+<area shape="rect" id="Node000005" href="$main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,77,60,102"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="94,92,60,92,60,87,94,87"/>
+<area shape="rect" id="Node000007" href="$classMainWindow.html#a4f357ab64ee2507b7e66b10258ad0714" title="Конструктор с готовым фасадом навигации." alt="" coords="119,134,316,159"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="361,147,316,148,316,142,361,142"/>
+</map>

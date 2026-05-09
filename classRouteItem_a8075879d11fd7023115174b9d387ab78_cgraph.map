@@ -1,0 +1,5 @@
+<map id="RouteItem::setRoute" name="RouteItem::setRoute">
+<area shape="rect" id="Node000001" title="Устанавливает маршрут для отображения." alt="" coords="5,5,161,31"/>
+<area shape="rect" id="Node000002" href="$classdomain_1_1Graph.html#a17dc3667b7246c30e87ac24a5eb1c0ed" title="Возвращает узел по ID." alt="" coords="209,5,391,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="162,15,195,15,195,21,162,21"/>
+</map>

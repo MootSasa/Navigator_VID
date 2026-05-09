@@ -1,0 +1,5 @@
+<map id="MapScene::clearRoute" name="MapScene::clearRoute">
+<area shape="rect" id="Node000001" title="Очищает подсветку маршрута." alt="" coords="5,5,172,31"/>
+<area shape="rect" id="Node000002" href="$classRouteItem.html#ae2e5fcc9c60bca9c94e93b234d3c3c44" title="Очищает маршрут." alt="" coords="220,5,388,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,15,207,15,207,21,172,21"/>
+</map>

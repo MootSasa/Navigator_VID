@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['calculate_0',['calculate',['../classdomain_1_1ScheduledLogic.html#a52b7eabc1ad4973f1262c73714c571a9',1,'domain::ScheduledLogic::calculate()'],['../classdomain_1_1FrequencyBasedLogic.html#ad965667637828a9a0da4ceeedda1f6af',1,'domain::FrequencyBasedLogic::calculate()'],['../classdomain_1_1ITimeVariant.html#a1294d0e93eb9d406ddfc449bcffd407b',1,'domain::ITimeVariant::calculate()'],['../classdomain_1_1StaticLogic.html#a232f3d9fab933b35520cf9f2a002014c',1,'domain::StaticLogic::calculate()'],['../classdomain_1_1TimeWindowLogic.html#a7811be478d8b22bdd6017ed313d79752',1,'domain::TimeWindowLogic::calculate()']]],
+  ['car_1',['Car',['../namespacedomain.html#aa5d214acadbd0e819ca85c41f05012d7ae9989db5dabeea617f40c8dbfd07f5fb',1,'domain']]],
+  ['car_5ffuel_5fl_5fper_5f100km_2',['car_fuel_l_per_100km',['../structdomain_1_1TransportParams.html#a4a838488f4c5e0a7c34070705ccb32d6',1,'domain::TransportParams']]],
+  ['car_5ffuel_5frub_5fper_5fl_3',['car_fuel_rub_per_l',['../structdomain_1_1TransportParams.html#a3e1cb6a1b4ab538ed69f8894a16916e9',1,'domain::TransportParams']]],
+  ['car_5fspeed_5fkmh_4',['car_speed_kmh',['../structdomain_1_1TransportParams.html#a3ee5813ef0061beee6b2fb3d96f182c6',1,'domain::TransportParams']]],
+  ['centermaprequested_5',['centerMapRequested',['../classRoutePanel.html#a52804f3437972b54d6ba0dddfc3a7946',1,'RoutePanel']]],
+  ['cheapeststrategy_6',['CheapestStrategy',['../classapplication_1_1CheapestStrategy.html',1,'application']]],
+  ['clearnodehighlights_7',['clearNodeHighlights',['../classMapScene.html#aa6076b13f69838ff4d999596c6c2c751',1,'MapScene']]],
+  ['clearresults_8',['clearResults',['../classRoutePanel.html#ad2dadb85e9880ed72213863ccc5e7f03',1,'RoutePanel']]],
+  ['clearroute_9',['clearroute',['../classRouteItem.html#ae2e5fcc9c60bca9c94e93b234d3c3c44',1,'RouteItem::clearRoute()'],['../classMapScene.html#acf2ade2e2fcb147886f7482c72bb0d9a',1,'MapScene::clearRoute()']]],
+  ['combined_5fcost_2eh_10',['combined_cost.h',['../combined__cost_8h.html',1,'']]],
+  ['combinedcost_11',['CombinedCost',['../structdomain_1_1CombinedCost.html',1,'domain']]],
+  ['coords_12',['coords',['../structdomain_1_1Node.html#aef2e0cf4a4bff34b739f3dc47889ee22',1,'domain::Node']]],
+  ['cost_13',['cost',['../structdomain_1_1EdgeResult.html#a379caeac9456c6168c853d1c831ff786',1,'domain::EdgeResult']]],
+  ['create_5fcost_14',['create_cost',['../classapplication_1_1IRouteStrategy.html#a608ce05d0e31558076f25a4d7c34edf6',1,'application::IRouteStrategy::create_cost()'],['../classapplication_1_1FastestStrategy.html#a0ecf447c7e68779151b4cdf10d57a385',1,'application::FastestStrategy::create_cost()'],['../classapplication_1_1CheapestStrategy.html#a4c2a777e843dcd4793a4570c1c8df5bf',1,'application::CheapestStrategy::create_cost()'],['../classapplication_1_1MostConvenientStrategy.html#a74d078eea433c5816cf0b0369e90c0f9',1,'application::MostConvenientStrategy::create_cost()']]],
+  ['csv_5fparser_2ecpp_15',['csv_parser.cpp',['../csv__parser_8cpp.html',1,'']]],
+  ['csv_5fparser_2eh_16',['csv_parser.h',['../csv__parser_8h.html',1,'']]],
+  ['csvparser_17',['CsvParser',['../classinfrastructure_1_1CsvParser.html',1,'infrastructure']]]
+];

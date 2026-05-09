@@ -1,0 +1,15 @@
+<map id="application::NavigationFacade::findRoute" name="application::NavigationFacade::findRoute">
+<area shape="rect" id="Node000001" title="Найти маршрут между двумя узлами." alt="" coords="5,97,224,137"/>
+<area shape="rect" id="Node000002" href="$namespaceapplication.html#aac6f2a30b5642422e7440b793eb3d211" title="Ищет маршрут между двумя узлами с помощью алгоритма A*." alt="" coords="272,104,436,129"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="224,114,258,114,258,119,224,119"/>
+<area shape="rect" id="Node000003" href="$classdomain_1_1Graph.html#a9010d53766badd06cc7d2a36bcca8c4a" title="Возвращает все рёбра исходящие из узла." alt="" coords="484,5,703,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="372,102,421,71,483,40,506,32,508,37,485,44,423,75,375,106"/>
+<area shape="rect" id="Node000004" href="$classdomain_1_1Graph.html#a17dc3667b7246c30e87ac24a5eb1c0ed" title="Возвращает узел по ID." alt="" coords="503,55,684,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="416,101,517,80,518,85,417,107"/>
+<area shape="rect" id="Node000005" href="$classdomain_1_1Graph.html#a478eec2866c6565cd0507704d496607c" title="Проверяет существование узла." alt="" coords="502,104,685,129"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="436,114,488,114,488,119,436,119"/>
+<area shape="rect" id="Node000006" href="$classapplication_1_1IRouteStrategy.html#a42e689c6e35178624cf2377ca53450e5" title="Эвристическая функция для A*." alt="" coords="494,154,693,194"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="408,127,497,148,496,153,407,132"/>
+<area shape="rect" id="Node000007" href="$classapplication_1_1IRouteStrategy.html#a33d7b6b5d5a1107e2585569e1ef41232" title="Сравнивает две стоимости (a &lt; b по критерию стратегии)." alt="" coords="494,218,693,258"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="372,127,420,165,485,204,502,211,499,216,483,208,417,169,369,131"/>
+</map>
