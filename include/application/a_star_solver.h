@@ -17,9 +17,11 @@ class IRouteStrategy;
  * @brief Результат поиска маршрута.
  */
 struct RouteResult {
-    std::vector<domain::NodeId> nodes;   ///< Последовательность узлов маршрута
-    std::vector<domain::EdgeId> edges;  ///< Последовательность рёбер маршрута
-    domain::CombinedCost total_cost;     ///< Итоговая стоимость маршрута
+    std::vector<domain::NodeId> nodes;              ///< Последовательность узлов маршрута
+    std::vector<domain::EdgeId> edges;             ///< Последовательность рёбер маршрута
+    std::vector<domain::TransportType> actual_transports;  ///< Фактический тип транспорта на каждом ребре
+    domain::CombinedCost total_cost;                ///< Итоговая стоимость маршрута
+    std::string strategy_name;                      ///< Имя стратегии: "fastest", "cheapest", "convenient"
 };
 
 /**
