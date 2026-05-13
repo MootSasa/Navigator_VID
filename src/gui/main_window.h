@@ -3,6 +3,8 @@
 #include "application/navigation_facade.h"
 
 #include <QMainWindow>
+#include <QFutureWatcher>
+#include <QtConcurrent>
 
 class MapWidget;
 class MapScene;
@@ -30,6 +32,9 @@ private slots:
     void onRouteRequested(domain::NodeId start, domain::NodeId goal,
                           std::chrono::system_clock::time_point departure);
 
+    /// Обработка завершения асинхронного поиска маршрута.
+    void onRouteFinished();
+
     /// Обработка выбора маршрута из списка.
     void onRouteSelected(int index);
 
@@ -46,6 +51,9 @@ private:
     RoutePanel* routePanel_;
 
     std::vector<application::RouteResult> currentResults_;
+
+    /// Watcher для отслеживания завершения асинхронного поиска.
+    QFutureWatcher<std::vector<application::RouteResult>>* routeWatcher_ = nullptr;
 
     /// Режим выбора: что выбирает следующий клик по узлу.
     enum class SelectionMode { Start, Goal };

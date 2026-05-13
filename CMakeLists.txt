@@ -56,7 +56,7 @@ add_executable(navigator
 )
 target_link_libraries(navigator PRIVATE navigator_core)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -75,4 +75,4 @@ add_executable(navigator_gui
 )
 
 target_include_directories(navigator_gui PRIVATE include)
-target_link_libraries(navigator_gui PRIVATE navigator_core Qt6::Widgets)
+target_link_libraries(navigator_gui PRIVATE navigator_core Qt6::Widgets Qt6::Concurrent)

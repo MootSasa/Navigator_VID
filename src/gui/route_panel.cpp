@@ -12,7 +12,7 @@
 RoutePanel::RoutePanel(QWidget* parent)
     : QWidget(parent)
 {
-    setFixedWidth(300);
+    setFixedWidth(380);
 
     // Единая вертикальная колонка
     auto* outerLayout = new QVBoxLayout(this);
@@ -148,7 +148,7 @@ RoutePanel::RoutePanel(QWidget* parent)
     detailsBrowser_->setOpenLinks(false);
     detailsBrowser_->setReadOnly(true);
     detailsBrowser_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    detailsBrowser_->setMaximumHeight(200);
+    detailsBrowser_->setMaximumHeight(350);
     layout->addWidget(detailsBrowser_);
 
     layout->addStretch();

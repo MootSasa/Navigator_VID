@@ -105,10 +105,31 @@ void MainWindow::onRouteRequested(domain::NodeId start, domain::NodeId goal,
         return;
     }
 
+    // Если предыдущий поиск ещё не завершён - игнорируем новый запрос
+    if (routeWatcher_ && routeWatcher_->isRunning()) {
+        statusBar()->showMessage("Подождите, идёт поиск маршрута...");
+        return;
+    }
+
     statusBar()->showMessage("Поиск маршрута...");
 
-    // Ищем маршрут всеми стратегиями
-    auto results = facade_->findAllRoutes(start, goal, departure);
+    // Запускаем поиск в пуле потоков
+    auto future = QtConcurrent::run([this, start, goal, departure]() {
+        return facade_->findAllRoutes(start, goal, departure);
+    });
+
+    routeWatcher_ = new QFutureWatcher<std::vector<application::RouteResult>>(this);
+    connect(routeWatcher_, &QFutureWatcherBase::finished,
+            this, &MainWindow::onRouteFinished);
+    routeWatcher_->setFuture(future);
+}
+
+void MainWindow::onRouteFinished()
+{
+    auto results = routeWatcher_->result();
+    routeWatcher_->deleteLater();
+    routeWatcher_ = nullptr;
+
     currentResults_ = std::move(results);
 
     if (currentResults_.empty()) {
