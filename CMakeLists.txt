@@ -55,3 +55,24 @@ add_executable(navigator
     src/main.cpp
 )
 target_link_libraries(navigator PRIVATE navigator_core)
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+add_executable(navigator_gui
+    src/gui/gui_main.cpp
+    src/gui/main_window.cpp
+    src/gui/map_scene.cpp
+    src/gui/map_widget.cpp
+    src/gui/node_item.cpp
+    src/gui/edge_item.cpp
+    src/gui/route_item.cpp
+    src/gui/route_panel.cpp
+    src/gui/transport_legend.cpp
+    resources/resources.qrc
+)
+
+target_include_directories(navigator_gui PRIVATE include)
+target_link_libraries(navigator_gui PRIVATE navigator_core Qt6::Widgets)

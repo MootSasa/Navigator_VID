@@ -31,7 +31,11 @@ std::optional<RouteResult> NavigationFacade::findRoute(
     std::chrono::system_clock::time_point departure
 ) {
     IRouteStrategy& strategy = getStrategy(strategy_type);
-    return application::findRoute(*graph_, start, goal, strategy, params_, departure);
+    auto result = application::findRoute(*graph_, start, goal, strategy, params_, departure);
+    if (result) {
+        result->strategy_name = strategy_type;
+    }
+    return result;
 }
 
 std::vector<RouteResult> NavigationFacade::findAllRoutes(
@@ -42,13 +46,13 @@ std::vector<RouteResult> NavigationFacade::findAllRoutes(
     std::vector<RouteResult> results;
 
     auto r1 = application::findRoute(*graph_, start, goal, fastest_, params_, departure);
-    if (r1) results.push_back(*r1);
+    if (r1) { r1->strategy_name = "fastest"; results.push_back(*r1); }
 
     auto r2 = application::findRoute(*graph_, start, goal, cheapest_, params_, departure);
-    if (r2) results.push_back(*r2);
+    if (r2) { r2->strategy_name = "cheapest"; results.push_back(*r2); }
 
     auto r3 = application::findRoute(*graph_, start, goal, convenient_, params_, departure);
-    if (r3) results.push_back(*r3);
+    if (r3) { r3->strategy_name = "convenient"; results.push_back(*r3); }
 
     return results;
 }

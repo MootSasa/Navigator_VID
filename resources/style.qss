@@ -1,0 +1,196 @@
+/* Глобальные настройки */
+* {
+    font-family: "Segoe UI", "Inter", "Ubuntu", sans-serif;
+    font-size: 13px;
+}
+
+/* Главное окно */
+MainWindow {
+    background-color: #FAFAFA;
+}
+
+/* Боковая панель */
+RoutePanel {
+    background-color: #1E1E2E;
+    color: #CDD6F4;
+    border: none;
+    border-right: 1px solid #313244;
+}
+
+/* Заголовок панели */
+QLabel#panelTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: #CDD6F4;
+    padding: 8px 0px;
+}
+
+QLabel#sectionLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #A6ADC8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-top: 12px;
+    padding-bottom: 4px;
+}
+
+/* Боксы */
+QComboBox {
+    background-color: #313244;
+    color: #CDD6F4;
+    border: 1px solid #45475A;
+    border-radius: 6px;
+    padding: 6px 12px;
+    min-height: 28px;
+}
+
+QComboBox:hover {
+    border-color: #5C6BC0;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 24px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #A6ADC8;
+    margin-right: 8px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #313244;
+    color: #CDD6F4;
+    border: 1px solid #45475A;
+    border-radius: 4px;
+    selection-background-color: #5C6BC0;
+    selection-color: #FFFFFF;
+    padding: 4px;
+}
+
+/* Поле ввода времени */
+QLineEdit#timeEdit {
+    background-color: #313244;
+    color: #CDD6F4;
+    border: 1px solid #45475A;
+    border-radius: 6px;
+    padding: 6px 12px;
+    min-height: 28px;
+}
+
+QLineEdit#timeEdit:disabled {
+    background-color: #1E1E2E;
+    color: #6C7086;
+    border-color: #313244;
+}
+
+QLineEdit#timeEdit:focus {
+    border-color: #5C6BC0;
+}
+
+/* Галочка "Текущее время" */
+QCheckBox#nowCheckbox {
+    color: #CDD6F4;
+    spacing: 8px;
+}
+
+QCheckBox#nowCheckbox::indicator {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #45475A;
+    border-radius: 3px;
+    background-color: #313244;
+}
+
+QCheckBox#nowCheckbox::indicator:checked {
+    border-color: #5C6BC0;
+    background-color: #5C6BC0;
+}
+
+QCheckBox#nowCheckbox::indicator:hover {
+    border-color: #7986CB;
+}
+
+/* Кнопки действий (Найти / Сброс / Центр) */
+QPushButton#actionButton {
+    background-color: #45475A;
+    color: #CDD6F4;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 32px;
+}
+
+QPushButton#actionButton:hover {
+    background-color: #585B70;
+}
+
+QPushButton#actionButton:pressed {
+    background-color: #313244;
+}
+
+QPushButton#actionButton:disabled {
+    background-color: #313244;
+    color: #6C7086;
+}
+
+/* Скроллбар */
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 6px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #45475A;
+    border-radius: 3px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #5C6BC0;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+/* Браузер деталей маршрута */
+QTextBrowser#routeDetails {
+    background-color: #181825;
+    color: #CDD6F4;
+    border: none;
+    border-radius: 6px;
+    padding: 4px;
+    outline: none;
+}
+
+/* Легенда */
+TransportLegend {
+    background-color: rgba(30, 30, 46, 200);
+    border: 1px solid #313244;
+    border-radius: 8px;
+}
+
+/* Статусбар */
+QStatusBar {
+    background-color: #181825;
+    color: #A6ADC8;
+    font-size: 12px;
+    border-top: 1px solid #313244;
+}
