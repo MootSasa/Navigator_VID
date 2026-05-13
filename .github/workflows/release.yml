@@ -1,0 +1,137 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build qt6-base-dev qt6-base-dev-tools
+
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build GUI
+        run: cmake --build build --target navigator_gui
+
+      - name: Package
+        run: |
+          mkdir -p navigator_linux/data
+          cp build/navigator_gui navigator_linux/
+          cp data/*.csv navigator_linux/data/
+          cat > navigator_linux/install_qt.sh << 'EOF'
+          #!/bin/bash
+          set -e
+          echo "Checking Qt6 dependencies..."
+          if ldconfig -p | grep -q libQt6Widgets; then
+              echo "Qt6 already installed."
+              exit 0
+          fi
+          if command -v apt-get &> /dev/null; then
+              echo "Installing Qt6 via apt-get..."
+              sudo apt-get update
+              sudo apt-get install -y qt6-base-dev libqt6widgets6 libqt6gui6 libqt6core6
+          elif command -v dnf &> /dev/null; then
+              echo "Installing Qt6 via dnf..."
+              sudo dnf install -y qt6-qtbase-gui qt6-qtbase
+          elif command -v pacman &> /dev/null; then
+              echo "Installing Qt6 via pacman..."
+              sudo pacman -Sy --noconfirm qt6-base
+          else
+              echo "Unsupported package manager. Please install Qt6 manually."
+              exit 1
+          fi
+          echo "Qt6 installed successfully."
+          EOF
+          chmod +x navigator_linux/install_qt.sh
+          tar -czvf navigator_linux.tar.gz navigator_linux
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: navigator_linux
+          path: navigator_linux.tar.gz
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Qt6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          modules: 'qtbase'
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build GUI
+        run: cmake --build build --target navigator_gui --config Release
+
+      - name: Deploy Qt dependencies
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Name navigator_windows
+          Copy-Item build/Release/navigator_gui.exe navigator_windows/
+          Copy-Item data/*.csv navigator_windows/
+          windeployqt navigator_windows/navigator_gui.exe --release --no-translations --no-compiler-runtime
+
+      - name: Package
+        shell: pwsh
+        run: Compress-Archive -Path navigator_windows -DestinationPath navigator_windows.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: navigator_windows
+          path: navigator_windows.zip
+
+  release:
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: navigator_linux
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: navigator_windows
+
+      - name: Determine prerelease
+        id: prerelease
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if echo "$TAG" | grep -qiE 'alpha|beta|rc|dev|pre'; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            navigator_linux.tar.gz
+            navigator_windows.zip
+          generate_release_notes: true
+          prerelease: ${{ steps.prerelease.outputs.prerelease }}
