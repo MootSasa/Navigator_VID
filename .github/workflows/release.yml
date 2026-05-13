@@ -88,8 +88,9 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Name navigator_windows
+          New-Item -ItemType Directory -Force -Name navigator_windows/data
           Copy-Item build/Release/navigator_gui.exe navigator_windows/
-          Copy-Item data/*.csv navigator_windows/
+          Copy-Item data/*.csv navigator_windows/data/
           windeployqt navigator_windows/navigator_gui.exe --release --no-translations --no-compiler-runtime
 
       - name: Package
