@@ -7,15 +7,16 @@
 
 #include <gtest/gtest.h>
 
+#include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <cstdio>
 
 using namespace infrastructure;
 
 // Вспомогательная функция: записать содержимое во временный файл и вернуть путь
 static std::string writeTempFile(const std::string& name, const std::string& content) {
-    std::string path = "/tmp/navigator_test_" + name;
+    std::string path = (std::filesystem::temp_directory_path() / ("navigator_test_" + name)).string();
     std::ofstream out(path);
     out << content;
     return path;
